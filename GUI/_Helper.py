@@ -239,7 +239,9 @@ def dataloader_pruning(datascript_path, image_height, image_width, num_channels,
         sys.path.append(os.path.dirname(datascript_path))
         datascript = __import__(os.path.splitext(os.path.basename(datascript_path))[0])
         x_train, y_train, _, _ = datascript.get_data()
-        if y_train.shape[1] > 1:
+        print("SHAPE!!")
+        print(len(y_train.shape))
+        if len(y_train.shape) > 1:
             label_one_hot = True
         else:
             label_one_hot = False
