@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
         model_pruning,
         download,
         terminate_thread,
-        optimization_before_load
+        # optimization_before_load
     )
 
     def __init__(self, parent=None):

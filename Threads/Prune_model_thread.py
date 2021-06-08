@@ -27,15 +27,25 @@ class Prune_model(QThread):
     def run(self):
         if 'Pruning' in self.optimizations:
             model = tf.keras.models.load_model(self.model_path)
+            num_classes = model.layers[-1].output_shape[1]
 
-            train_it, val_it, num_classes = dataloader_pruning(self.datascript_path, model.input.shape[1], model.input.shape[2], model.input.shape[3])
-            pruned_model = prune_model(self.model_path, self.prun_factor_dense, self.prun_factor_conv, metric='L1',comp=None, num_classes=num_classes)
+            x_train, x_val_y_train, label_one_hot = dataloader_pruning(self.datascript_path, model.input.shape[1], model.input.shape[2], model.input.shape[3], num_classes)
+
+            pruned_model = prune_model(self.model_path, self.prun_factor_dense, self.prun_factor_conv, metric='L1',comp=None, num_classes=num_classes, label_one_hot=label_one_hot)
             
             train_epochs = 10
             callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+
             # fit model
-            pruned_model.fit_generator(train_it, steps_per_epoch=len(train_it),
-                validation_data=val_it, validation_steps=len(val_it), epochs=train_epochs, callbacks=[callback])
+            if os.path.isfile(self.datascript_path):
+                print(x_train.shape)
+                print(x_val_y_train.shape)
+                pruned_model.fit(x=x_train, y=x_val_y_train, batch_size=64, validation_split=0.2,
+                    epochs=train_epochs, callbacks=[callback])
+            elif os.path.isdir(self.datascript_path):
+                pruned_model.fit_generator(x_train, steps_per_epoch=len(x_train),
+                    validation_data=x_val_y_train, validation_steps=len(x_val_y_train), epochs=train_epochs, callbacks=[callback])
+                
             pruned_model.save(str(self.model_path[:-3]) + '_pruned.h5', include_optimizer=False)
         self.request_signal.emit()
         

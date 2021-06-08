@@ -61,6 +61,13 @@ class UIStartWindow(QWidget):
         self.Daten_Pfad.setFixedWidth(300)
         self.Daten_Pfad.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.Daten_Pfad.setAlignment(Qt.AlignCenter)
+
+        self.dataloader_list = QComboBox()
+        self.dataloader_list.setFixedWidth(170)
+        self.dataloader_list.addItems(["Select PATH with data", "Select SCRIPT with data"])
+
+        self.Abstand_dataloader_list = QLabel("")
+        self.Abstand_dataloader_list.setFixedWidth(170)
         
         self.Output_Pfad_Browse = QPushButton(" Output path... ", self)
         self.Output_Pfad_Browse.setToolTip('...')
@@ -84,7 +91,7 @@ class UIStartWindow(QWidget):
                            color: white; 
                            border: black solid 1px}""") 
         
-        self.Daten_einlesen_Browse = QPushButton(" Select Datapath... ", self)
+        self.Daten_einlesen_Browse = QPushButton(" Select Data... ", self)
         self.Daten_einlesen_Browse.setToolTip('...')
         self.Daten_einlesen_Browse.setStyleSheet("""QPushButton {
                            font: 12pt """ + FONT_STYLE + """}
@@ -139,7 +146,7 @@ class UIStartWindow(QWidget):
         self.horizontal_box[7].addStretch()
         self.horizontal_box[7].addStretch()
         self.horizontal_box[7].addWidget(self.Datapng)
-        self.horizontal_box[7].addStretch()     
+        self.horizontal_box[7].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[8].addStretch()
@@ -151,22 +158,30 @@ class UIStartWindow(QWidget):
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[9].addStretch()
-        self.horizontal_box[9].addWidget(self.Modell_einlesen_Browse)
+        self.horizontal_box[9].addWidget(self.Abstand_dataloader_list)
         self.horizontal_box[9].addStretch()
         self.horizontal_box[9].addStretch()
-        self.horizontal_box[9].addWidget(self.Daten_einlesen_Browse)
+        self.horizontal_box[9].addWidget(self.dataloader_list)
         self.horizontal_box[9].addStretch()
+        
+        self.horizontal_box.append(QHBoxLayout())
+        self.horizontal_box[10].addStretch()
+        self.horizontal_box[10].addWidget(self.Modell_einlesen_Browse)
+        self.horizontal_box[10].addStretch()
+        self.horizontal_box[10].addStretch()
+        self.horizontal_box[10].addWidget(self.Daten_einlesen_Browse)
+        self.horizontal_box[10].addStretch()
     
         self.horizontal_box.append(QHBoxLayout())
-        self.horizontal_box[10].addWidget(self.Abstand_unten)
+        self.horizontal_box[11].addWidget(self.Abstand_unten)
         
         self.horizontal_box.append(QHBoxLayout())
         sublayout = QGridLayout()
         sublayout.addWidget(self.Abstand_oben, 0, 0, Qt.AlignLeft)
         sublayout.addWidget(self.Schritt, 0, 1)
         sublayout.addWidget(self.Next, 0, 2, Qt.AlignRight)
-        self.horizontal_box[11].addLayout(sublayout)
-        self.horizontal_box[11].setAlignment(Qt.AlignBottom)
+        self.horizontal_box[12].addLayout(sublayout)
+        self.horizontal_box[12].setAlignment(Qt.AlignBottom)
         
         
         self.vertical_box = QVBoxLayout()

@@ -687,7 +687,7 @@ def pruning_for_acc(keras_model, x_train, y_train, x_test, y_test, comp,fit ,pru
     return pruned_model
     
     
-def prune_model(keras_model, prun_factor_dense=10, prun_factor_conv=10,metric='L1',comp=None,num_classes=None):
+def prune_model(keras_model, prun_factor_dense=10, prun_factor_conv=10,metric='L1',comp=None,num_classes=None, label_one_hot=None):
     """
     A given keras model get pruned. The factor for dense and conv says how many percent
     of the dense and conv layers should be deleted. After pruning the model will be
@@ -712,13 +712,19 @@ def prune_model(keras_model, prun_factor_dense=10, prun_factor_conv=10,metric='L
     if num_classes <= 2 and comp == None:
         comp = {
         "optimizer": 'adam',
-        "loss": tf.keras.losses.BinaryCrossentropy(),#from_logits=True),
+        "loss": tf.keras.losses.BinaryCrossentropy(),
         "metrics": 'accuracy'}    
     elif num_classes > 3 and comp == None:
-        comp = {
-        "optimizer": 'adam',
-        "loss": tf.keras.losses.SparseCategoricalCrossentropy(),#from_logits=True),
-        "metrics": 'accuracy'}  
+        if label_one_hot == True:
+            comp = {
+            "optimizer": 'adam',
+            "loss": tf.keras.losses.CategoricalCrossentropy(),
+            "metrics": 'accuracy'}  
+        else:
+            comp = {
+            "optimizer": 'adam',
+            "loss": tf.keras.losses.SparseCategoricalCrossentropy(),
+            "metrics": 'accuracy'}
     
     
     layer_types, layer_params, layer_output_shape, layer_bias = load_model_param(model)

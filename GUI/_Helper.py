@@ -5,6 +5,7 @@ import numpy as np
 import random
 import cv2
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 from pruning import *
 
 
@@ -28,9 +29,14 @@ def get_model_path(self, CurWindow):
     print(CurWindow.Model_Pfad.text())
 
 def get_data_loader_path(self, CurWindow):
-    self.data_loader_path = QFileDialog.getExistingDirectory(
-        self, "Select your trainingdata path", "./"
-    )
+    if "Select PATH with data" in CurWindow.dataloader_list.currentText():
+        self.data_loader_path = QFileDialog.getExistingDirectory(
+            self, "Select your trainingdata path", "./"
+        )
+    elif "Select SCRIPT with data" in CurWindow.dataloader_list.currentText():
+        self.data_loader_path = QFileDialog.getOpenFileName(
+            self, "Select your data loader script", "./"
+        )[0]
     CurWindow.Daten_Pfad.setText(self.data_loader_path)
     print(CurWindow.Daten_Pfad.text())
 
@@ -180,64 +186,87 @@ def terminate_thread(self, CurWindow):
     except:
         print("Error")
 
-def optimization_before_load(self):
-    if "Pruning" in self.optimizations:
+# def optimization_before_load(self):
+#     if "Pruning" in self.optimizations:
 
-        pruned_model = prune_model(self.model_path)
-        train_it, val_it, _ = dataloader_pruning(self, self.data_loader_path)
+#         pruned_model = prune_model(self.model_path)
+#         train_it, val_it, _ = dataloader_pruning(self, self.data_loader_path)
 
-        train_epochs = 10
-        callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
-        # fit model
-        pruned_model.fit_generator(train_it, steps_per_epoch=len(train_it),
-            validation_data=val_it, validation_steps=len(val_it), epochs=train_epochs, callbacks=[callback])
+#         train_epochs = 10
+#         callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+#         # fit model
+#         pruned_model.fit_generator(train_it, steps_per_epoch=len(train_it),
+#             validation_data=val_it, validation_steps=len(val_it), epochs=train_epochs, callbacks=[callback])
 
 
-def dataloader_quantization(train_images_path, image_height, image_width):
+def dataloader_quantization(datascript_path, image_height, image_width):
     train_images = []
 
-    classes = os.listdir(train_images_path)
-    print("Num classes: " + str(len(classes)))
-    for folders in classes:
-        if os.path.isdir(train_images_path + "/" + folders):
-            images = os.listdir(train_images_path + "/" + folders)
-        for i in range(0,int(500/len(classes))):
-            rand_img = random.choice(images)
-            img = mpimg.imread(train_images_path + "/" + folders + "/" + rand_img)
-            resized_image = cv2.resize(img, (image_height, image_width))
-            train_images.append(resized_image)
-    
-    train_images = np.asarray(train_images)
-    if len(train_images.shape) == 3:
-        train_images = np.expand_dims(train_images, axis=3) 
+    if os.path.isfile(datascript_path):
+        print("IST EINE DATEI")
+        sys.path.append(os.path.dirname(datascript_path))
+        datascript = __import__(os.path.splitext(os.path.basename(datascript_path))[0])
+        x_train, _, _, _ = datascript.get_data()
 
-    return train_images
+        return x_train
+
+    elif os.path.isdir(datascript_path):
+        print("IST EIN ORDNER")
+
+        classes = os.listdir(datascript_path)
+        print("Num classes: " + str(len(classes)))
+        for folders in classes:
+            if os.path.isdir(datascript_path + "/" + folders):
+                images = os.listdir(datascript_path + "/" + folders)
+            for i in range(0,int(500/len(classes))):
+                rand_img = random.choice(images)
+                img = mpimg.imread(datascript_path + "/" + folders + "/" + rand_img)
+                resized_image = cv2.resize(img, (image_height, image_width))
+                train_images.append(resized_image)
+        
+        train_images = np.asarray(train_images)
+        if len(train_images.shape) == 3:
+            train_images = np.expand_dims(train_images, axis=3) 
+
+        return train_images
 
 
 
-def dataloader_pruning(train_images_path, image_height, image_width, num_channels):
+def dataloader_pruning(datascript_path, image_height, image_width, num_channels, num_classes):
 
-    num_classes = len(os.listdir(train_images_path))
-
-    print(num_channels)
-
-    # create data generator
-    train_datagen = ImageDataGenerator(rescale=1.0/255.0, validation_split=0.2)
-    # prepare iterators
-    if num_channels == 1:
-        if num_classes > 2:
-            train_it = train_datagen.flow_from_directory(train_images_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='categorical', batch_size=64, subset='training')
-            val_it = train_datagen.flow_from_directory(train_images_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='categorical', batch_size=64, subset='validation')
+    if os.path.isfile(datascript_path):
+        print("IST EINE DATEI")
+        sys.path.append(os.path.dirname(datascript_path))
+        datascript = __import__(os.path.splitext(os.path.basename(datascript_path))[0])
+        x_train, y_train, _, _ = datascript.get_data()
+        if y_train.shape[1] > 1:
+            label_one_hot = True
         else:
-            train_it = train_datagen.flow_from_directory(train_images_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='training')
-            val_it = train_datagen.flow_from_directory(train_images_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='validation')
-    
-    elif num_channels == 3:
-        if num_classes > 2:
-            train_it = train_datagen.flow_from_directory(train_images_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='categorical', batch_size=64, subset='training')
-            val_it = train_datagen.flow_from_directory(train_images_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='categorical', batch_size=64, subset='validation')
-        else:
-            train_it = train_datagen.flow_from_directory(train_images_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='training')
-            val_it = train_datagen.flow_from_directory(train_images_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='validation')
+            label_one_hot = False
+            
+        return x_train, y_train, label_one_hot
 
-    return train_it, val_it, num_classes
+    elif os.path.isdir(datascript_path):
+
+        print(num_channels)
+
+        # create data generator
+        train_datagen = ImageDataGenerator(rescale=1.0/255.0, validation_split=0.2)
+        # prepare iterators
+        if num_channels == 1:
+            if num_classes > 2:
+                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='categorical', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='categorical', batch_size=64, subset='validation')
+            else:
+                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='validation')
+        
+        elif num_channels == 3:
+            if num_classes > 2:
+                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='categorical', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='categorical', batch_size=64, subset='validation')
+            else:
+                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='validation')
+
+        return train_it, val_it
