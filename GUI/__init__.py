@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
         
         super(MainWindow, self).__init__(parent)
 
-        self.setWindowTitle("Neural Network on Microcontroller")
+        self.setWindowTitle("TFL2uC")
         self.setWindowIcon(QIcon(os.path.join("Images", "Window_Icon_blue.png")))
         self.setFixedWidth(800)
         self.setFixedHeight(600)

@@ -6,7 +6,6 @@ import random
 import cv2
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-from pruning import *
 
 
 import math
@@ -22,9 +21,7 @@ def get_output_path(self, CurWindow):
     print(CurWindow.Output_Pfad.text())
 
 def get_model_path(self, CurWindow):
-    self.model_path = QFileDialog.getOpenFileName(self, "Select your model", "./")[
-        0
-    ]
+    self.model_path = QFileDialog.getOpenFileName(self, "Select your model", "./")[0]
     CurWindow.Model_Pfad.setText(self.model_path)
     print(CurWindow.Model_Pfad.text())
 
@@ -146,12 +143,12 @@ def get_optimization(self, button):
 
     print(self.optimizations)
 
-def set_optimizations(self, optimizations, CurWindow):
-    if "Pruning" in optimizations:
-        CurWindow.b[0].setChecked(True)
+# def set_optimizations(self, optimizations, CurWindow):
+#     if "Pruning" in optimizations:
+#         CurWindow.b[0].setChecked(True)
 
-    if "Quantization" in optimizations:
-        CurWindow.b[1].setChecked(True)
+#     if "Quantization" in optimizations:
+#         CurWindow.b[1].setChecked(True)
 
 def model_pruning(self, CurWindow):
     CurWindow.Back.setVisible(False)
@@ -172,7 +169,7 @@ def download(self, CurWindow):
 def terminate_thread(self, CurWindow):
 
     try:
-        print("uC stop")
+        print("Finish!")
         CurWindow.loading_images.stop_thread()
         CurWindow.conv_build_load.stop_thread()
         CurWindow.Finish.setVisible(True)
@@ -257,18 +254,18 @@ def dataloader_pruning(datascript_path, image_height, image_width, num_channels,
         # prepare iterators
         if num_channels == 1:
             if num_classes > 2:
-                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='categorical', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='categorical', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=64, subset='validation')
             else:
                 train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='training')
                 val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='validation')
         
         elif num_channels == 3:
             if num_classes > 2:
-                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='categorical', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='categorical', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=64, subset='validation')
             else:
                 train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='training')
                 val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='validation')
 
-        return train_it, val_it
+        return train_it, val_it, False
