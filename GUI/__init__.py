@@ -33,6 +33,7 @@ class MainWindow(QMainWindow):
         likes_spam: A boolean indicating if we like SPAM or not.
         eggs: An integer count of the eggs we have laid.
     """
+    from ._DataloaderWindow import DataloaderWindow
     from ._LoadWindow import LoadWindow
     from ._OptiWindow import OptiWindow
     from ._StartWindow import StartWindow

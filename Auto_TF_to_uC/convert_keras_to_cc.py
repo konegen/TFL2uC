@@ -72,7 +72,7 @@ def convert_model_to_cpp(converted_model_dir, model_name, project_dir):
         content = f.read().hex()
         result = bytearray.fromhex(content)
         with open(project_dir + "/src/" + model_name + "_data.cc", "wb") as w:
-            i = 0
+            values_in_row = 0
             num_values = 0
             
             w.write(bytearray('#include "./' + model_name + '_data.h"\n'
@@ -95,14 +95,14 @@ def convert_model_to_cpp(converted_model_dir, model_name, project_dir):
             
             for value in result:
                 num_values+=1
-                i+=1
+                values_in_row += 1
                 value = "0x{:02x}".format(value)
                 
-                if i ==1:
+                if values_in_row == 1:
                     w.write(bytearray(value, 'utf-8'))
-                elif i == 12:
+                elif values_in_row == 12:
                     w.write(bytearray(", " + str(value) + ",\n    ", 'utf-8'))
-                    i = 0
+                    values_in_row = 0
                 else:
                     w.write(bytearray(', ' + str(value), 'utf-8'))
                     

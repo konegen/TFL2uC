@@ -17,7 +17,6 @@ def OptiWindow(self, n, LastWindow):
         self.project_name = LastWindow.Projekt_Name.text()
         self.output_path = LastWindow.Output_Pfad.text()
         self.model_path = LastWindow.Model_Pfad.text()
-        self.data_loader_path = LastWindow.Daten_Pfad.text() 
             
     if self.project_name == "" or self.model_path == "" or self.output_path == "":
         msg = QMessageBox()
@@ -56,7 +55,14 @@ def OptiWindow(self, n, LastWindow):
     self.Window2.quant_int_only.clicked.connect(lambda:self.set_quant_dtype("int8 only", self.Window2))
     
     self.Window2.Back.clicked.connect(lambda:self.StartWindow())
-    self.Window2.Next.clicked.connect(lambda:self.LoadWindow("Next", self.Window2))
+    self.Window2.Next.clicked.connect(lambda:nextWindow(self, self.optimizations))
     
     self.setCentralWidget(self.Window2)
     self.show()
+
+
+def nextWindow(self, optimizations):
+    if optimizations:
+        self.DataloaderWindow("Next", self.Window2)
+    else:
+        self.LoadWindow("Next", self.Window2)

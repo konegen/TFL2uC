@@ -21,14 +21,10 @@ def StartWindow(self):
     
     if self.model_path != None:
         self.Window1.Model_Pfad.setText(self.model_path)
-    
-    if self.data_loader_path != None:
-        self.Window1.Daten_Pfad.setText(self.data_loader_path)
 
     
     self.Window1.Output_Pfad_Browse.clicked.connect(lambda:self.get_output_path(self.Window1))
     self.Window1.Modell_einlesen_Browse.clicked.connect(lambda:self.get_model_path(self.Window1))
-    self.Window1.Daten_einlesen_Browse.clicked.connect(lambda:self.get_data_loader_path(self.Window1))
     
     self.Window1.Next.clicked.connect(lambda:self.OptiWindow("Next", self.Window1))
     

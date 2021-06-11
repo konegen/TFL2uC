@@ -39,7 +39,7 @@ class UILoadWindow(QWidget):
         self.Loadpng.setPixmap(img)
         
         self.Schritt = QLabel(self)
-        Schritt_img = QPixmap(os.path.join('Images', 'GUI_progress_bar_Demonstrator', 'GUI_demonstrator_step_3.png'))
+        Schritt_img = QPixmap(os.path.join('Images', 'GUI_progress_bar_Demonstrator', 'GUI_demonstrator_step_4.png'))
         self.Schritt.setPixmap(Schritt_img)
         self.Schritt.setFixedHeight(30)
         self.Schritt.setAlignment(Qt.AlignCenter)
