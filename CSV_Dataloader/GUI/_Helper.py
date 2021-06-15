@@ -6,6 +6,7 @@ import random
 import cv2
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import csv
+import pandas as pd
 
 
 
@@ -13,7 +14,6 @@ import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
 
 def get_output_path(self, CurWindow):
     self.output_path = QFileDialog.getExistingDirectory(
@@ -41,9 +41,6 @@ def get_data_loader_path(self, CurWindow):
 
     if ".csv" in self.data_loader_path:
         print("SIE HABEN EINE CSV-DATEI AUSGEWÄHLT")
-        Sheet()
-
-
     else:
         print("KEINE CSV-DATEI")
 
@@ -373,10 +370,3 @@ def get_delimiter(self, CurWindow):
             self.delimiter += '|' + CurWindow.other_delimiter.text()
         
     print(self.delimiter)
-
-
-
-
-def test_func(self, CurrWindow):
-    CurrWindow.w = UICSVDataloaderWindow(self.FONT_STYLE, self)
-    CurrWindow.w.show()
