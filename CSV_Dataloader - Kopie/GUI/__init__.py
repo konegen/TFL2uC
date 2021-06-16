@@ -34,9 +34,7 @@ class MainWindow(QMainWindow):
         eggs: An integer count of the eggs we have laid.
     """
     from ._DataloaderWindow import DataloaderWindow
-    from ._LoadWindow import LoadWindow
-    from ._OptiWindow import OptiWindow
-    from ._StartWindow import StartWindow
+    from ._CSVDataloaderWindow import CSVDataloaderWindow
 
     from ._Helper import (
         get_output_path,
@@ -49,12 +47,16 @@ class MainWindow(QMainWindow):
         model_pruning,
         download,
         terminate_thread,
-        # optimization_before_load
+        browseCSVData,
+        previewCSVData,
+        loadCSVData,
+        get_delimiter,
+        test_func
     )
 
-    def __init__(self, parent=None):
+    def __init__(self):
         
-        super(MainWindow, self).__init__(parent)
+        super().__init__()
 
         self.setWindowTitle("TFL2uC")
         self.setWindowIcon(QIcon(os.path.join("Images", "Window_Icon_blue.png")))
@@ -72,5 +74,9 @@ class MainWindow(QMainWindow):
         self.prun_factor_dense = None
         self.prun_factor_conv = None
         self.quant_dtype = None
+        
+        self.delimiter = None
+        # self.data_loader_path = None
+        self.df = None
 
-        self.StartWindow()
+        self.DataloaderWindow()

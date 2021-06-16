@@ -5,15 +5,23 @@ import numpy as np
 import random
 import cv2
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
-
-
+import csv
+import pandas as pd
 import math
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 def get_output_path(self, CurWindow):
+    """Get the path where the genareted Project should be stored
+
+    A Browse window opens and you can navigate to the directory
+    you wanna store the project.
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
     self.output_path = QFileDialog.getExistingDirectory(
         self, "Select the output path", "./"
     )
@@ -21,11 +29,30 @@ def get_output_path(self, CurWindow):
     print(CurWindow.Output_Pfad.text())
 
 def get_model_path(self, CurWindow):
+    """Get the keras model which should be converted
+
+    A Browse window opens and you can navigate to the keras
+    model file you wanna convert to TensorFlow lite for
+    microcontrollers.
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
     self.model_path = QFileDialog.getOpenFileName(self, "Select your model", "./")[0]
     CurWindow.Model_Pfad.setText(self.model_path)
     print(CurWindow.Model_Pfad.text())
 
-def get_data_loader_path(self, CurWindow):
+def get_data_loader(self, CurWindow):
+    """Get the file or path to load your training data.
+
+    A Browse window opens and you can navigate to the directory
+    containing your training data. Otherwise you can select a file
+    which loads your training. If the file is a CSV the 
+    CSVDataloaderWindow() function is executed. 
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
     if "Select PATH with data" in CurWindow.dataloader_list.currentText():
         self.data_loader_path = QFileDialog.getExistingDirectory(
             self, "Select your trainingdata path", "./"
@@ -37,7 +64,22 @@ def get_data_loader_path(self, CurWindow):
     CurWindow.Daten_Pfad.setText(self.data_loader_path)
     print(CurWindow.Daten_Pfad.text())
 
+    if ".csv" in self.data_loader_path:
+        print("SIE HABEN EINE CSV-DATEI AUSGEWÄHLT")
+    else:
+        print("KEINE CSV-DATEI")
+
+
 def set_pruning(self, CurWindow):
+    """Adds or removes pruning from optimization.
+
+    If "self.optimizations" doesn't contain pruning it gets added.
+    Otherwise it gets removed. Furthermore the input fields for the
+    pruning factors appear or disappear.
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
     if CurWindow.Pruning.isChecked() == True:
         if not "Pruning" in self.optimizations:
             self.optimizations.append("Pruning")
@@ -75,6 +117,15 @@ def set_pruning(self, CurWindow):
         # CurWindow.Pruning.setGeometry(120, 85, 170, 170)
 
 def set_quantization(self, CurWindow):
+    """Adds or removes quantization from optimization.
+
+    If "self.optimizations" doesn't contain quantization it gets added.
+    Otherwise it gets removed. Furthermore the buttons for the
+    quantization type appear or disappear.
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
     if CurWindow.Quantization.isChecked() == True:
         if not "Quantization" in self.optimizations:
             self.optimizations.append("Quantization")
@@ -105,6 +156,15 @@ def set_quantization(self, CurWindow):
         # CurWindow.Quantization.setGeometry(515, 85, 170, 170)
 
 def set_quant_dtype(self, dtype, CurWindow):
+    """Sets the quantization type.
+
+    Checks which button of the quantization type is pressed and
+    sets it as quantization type.
+
+    Args:
+        dtype:     Defines the quantization type.
+        CurWindow: GUI window from which the function is executed.
+    """
     if "int8 with float fallback" in dtype:
         CurWindow.quant_int_only.setChecked(False)
         if CurWindow.quant_int.isChecked() == False:
@@ -120,7 +180,14 @@ def set_quant_dtype(self, dtype, CurWindow):
     print(self.quant_dtype)
 
 def get_optimization(self, button):
+    """Returns the selected optimizations.
 
+    Returns the selected optimizations according to the
+    button of the optimizaiton type is pressed or not.
+
+    Args:
+        button: Pruning or quantization button.
+    """
     if button.text() == "Pruning":
         if button.isChecked() == True:
             if not "Pruning" in self.optimizations:
@@ -151,6 +218,15 @@ def get_optimization(self, button):
 #         CurWindow.b[1].setChecked(True)
 
 def model_pruning(self, CurWindow):
+    """Starts the thread to prune the model.
+
+    The thread for pruning the model is started. Also, the two 
+    buttons of the GUI window are hidden and the thread for the 
+    loading screen is started.
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
     CurWindow.Back.setVisible(False)
     CurWindow.Load.setVisible(False)
 
@@ -158,7 +234,14 @@ def model_pruning(self, CurWindow):
     CurWindow.prune_model.start()
 
 def download(self, CurWindow):
+    """Starts the thread to convert the model and create the project.
 
+    The thread for pruning the model gets terminated and the thread
+    to convert the model and create the project gets started.
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
     try:
         CurWindow.prune_model.stop_thread()
         print("To uC start")
@@ -167,7 +250,16 @@ def download(self, CurWindow):
         print("Error")
 
 def terminate_thread(self, CurWindow):
+    """End of converting the model and creating the project.
 
+    Terminates the threads for pruning the model and converting the
+    model and creating the project. Additionally, the "Finish" button
+    becomes visible to close the GUI and the image of the loading
+    screen signals the end of the process.
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
     try:
         print("Finish!")
         CurWindow.loading_images.stop_thread()
@@ -183,24 +275,24 @@ def terminate_thread(self, CurWindow):
     except:
         print("Error")
 
-# def optimization_before_load(self):
-#     if "Pruning" in self.optimizations:
-
-#         pruned_model = prune_model(self.model_path)
-#         train_it, val_it, _ = dataloader_pruning(self, self.data_loader_path)
-
-#         train_epochs = 10
-#         callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
-#         # fit model
-#         pruned_model.fit_generator(train_it, steps_per_epoch=len(train_it),
-#             validation_data=val_it, validation_steps=len(val_it), epochs=train_epochs, callbacks=[callback])
-
 
 def dataloader_quantization(datascript_path, image_height, image_width):
+    """Get Training data for quantization.
+
+    Checks if your training data is inside a path or a file. Extracts
+    the data from the directories or the file and returns it.
+
+    Args:
+        datascript_path: Path or file of training data
+        image_height:    Height of image
+        image_width:     Width of image
+
+    Returns:
+        Training data which is needed for quantization.
+    """
     train_images = []
 
     if os.path.isfile(datascript_path):
-        print("IST EINE DATEI")
         sys.path.append(os.path.dirname(datascript_path))
         datascript = __import__(os.path.splitext(os.path.basename(datascript_path))[0])
         x_train, _, _, _ = datascript.get_data()
@@ -208,7 +300,6 @@ def dataloader_quantization(datascript_path, image_height, image_width):
         return x_train
 
     elif os.path.isdir(datascript_path):
-        print("IST EIN ORDNER")
 
         classes = os.listdir(datascript_path)
         print("Num classes: " + str(len(classes)))
@@ -230,7 +321,27 @@ def dataloader_quantization(datascript_path, image_height, image_width):
 
 
 def dataloader_pruning(datascript_path, image_height, image_width, num_channels, num_classes):
+    """Get data for retraining the model after pruning.
 
+    Checks if your data is inside a path or a file. Extracts the
+    data from the directories or the file. If it is a file there
+    is also a check if the label is one hot encoded or not. If it
+    is a path data genarators are initialized.  
+
+    Args:
+        datascript_path: Path or file of training data
+        image_height:    Height of image
+        image_width:     Width of image
+        num_channels:    Number of channels of the image
+        num_classes:     Number of different classes of the model
+
+    Returns:
+        If the dataloader is a file training data, the labels and
+        whether the label is one hot encoded or not is returned.
+        If the dataloader is a path the datagenerators for training
+        and validation data is returned. Furthermore "False" is
+        returned, because it is not one hot encoded. 
+    """
     if os.path.isfile(datascript_path):
         print("IST EINE DATEI")
         sys.path.append(os.path.dirname(datascript_path))

@@ -59,18 +59,18 @@ class UICSVDataloaderWindow2(QWidget):
 
         self.cb5 = QCheckBox('other', self)
 
-        self.other_delimiter = QLineEdit()
-        self.other_delimiter.setFixedWidth(50)
-        self.other_delimiter.setMaxLength(1)
+        self.other_seperator = QLineEdit()
+        self.other_seperator.setFixedWidth(50)
+        self.other_seperator.setMaxLength(1)
 
         sublayout_other = QHBoxLayout()
         sublayout_other.addWidget(self.cb5)
-        sublayout_other.addWidget(self.other_delimiter)
+        sublayout_other.addWidget(self.other_seperator)
         sublayout_other.addStretch()
         layout.addLayout(sublayout_other)
 
 
-        self.delimiter = None
+        self.seperator = None
         self.data_loader_path = None
         self.df = None
 
@@ -91,12 +91,12 @@ class UICSVDataloaderWindow2(QWidget):
         
             if self.data_loader_path != None and ".csv" in self.data_loader_path:
 
-                self.get_delimiter()
+                self.get_seperator()
 
-                if not self.delimiter:
+                if not self.seperator:
                     self.df = pd.read_csv(self.data_loader_path, index_col=False)
                 else:
-                    self.df = pd.read_csv(self.data_loader_path, index_col=False, sep=self.delimiter)
+                    self.df = pd.read_csv(self.data_loader_path, index_col=False, sep=self.seperator)
                 if self.df.size == 0:
                     return
 
@@ -136,37 +136,37 @@ class UICSVDataloaderWindow2(QWidget):
         return self.df
 
 
-    def get_delimiter(self):
+    def get_seperator(self):
 
-        self.delimiter = None
+        self.seperator = None
 
         if self.cb1.isChecked():
-            if self.delimiter == None:
-                self.delimiter = r'\t'
+            if self.seperator == None:
+                self.seperator = r'\t'
             else:
-                self.delimiter += r'|\t'
+                self.seperator += r'|\t'
         if self.cb2.isChecked():
-            if self.delimiter == None:
-                self.delimiter = ';'
+            if self.seperator == None:
+                self.seperator = ';'
             else:
-                self.delimiter += '|;'
+                self.seperator += '|;'
         if self.cb3.isChecked():
-            if self.delimiter == None:
-                self.delimiter = ','
+            if self.seperator == None:
+                self.seperator = ','
             else:
-                self.delimiter += '|,'
+                self.seperator += '|,'
         if self.cb4.isChecked():
-            if self.delimiter == None:
-                self.delimiter = r'\s+'
+            if self.seperator == None:
+                self.seperator = r'\s+'
             else:
-                self.delimiter += r'|\s+'
+                self.seperator += r'|\s+'
         if self.cb5.isChecked():
-            if self.delimiter == None:
-                self.delimiter = self.other_delimiter.text()
+            if self.seperator == None:
+                self.seperator = self.other_seperator.text()
             else:
-                self.delimiter += '|' + self.other_delimiter.text()
+                self.seperator += '|' + self.other_seperator.text()
             
-        print(self.delimiter)
+        print(self.seperator)
 
         
 

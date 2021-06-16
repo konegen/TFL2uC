@@ -11,13 +11,12 @@ from PyQt5.QtCore import *
 from UIWindows.UILoadWindow import *
 
 
-def LoadWindow(self, n, LastWindow):  
+def LoadWindow(self, LastWindow):  
 
-    if n == "Next":
-            
-        self.data_loader_path = LastWindow.Daten_Pfad.text() 
+    if self.optimizations:
+        self.data_loader_path = LastWindow.Daten_Pfad.text()
         
-        if self.optimizations and self.data_loader_path == "":
+        if  self.data_loader_path == "":
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
              
@@ -25,7 +24,8 @@ def LoadWindow(self, n, LastWindow):
             msg.setWindowTitle("Warning")
             msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             msg.exec_()
-            return        
+            return     
+             
 
     
     self.Window4 = UILoadWindow(self.FONT_STYLE, self.model_path, self.project_name, self.output_path, self.data_loader_path, self.prun_factor_dense, self.prun_factor_conv, self.optimizations, self.quant_dtype, self)

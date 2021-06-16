@@ -7,17 +7,8 @@ from PyQt5.QtCore import *
 
 
 class UIDataloaderWindow(QWidget):
-    """Summary of class here.
-
-    Longer class information....
-    Longer class information....
-
-    Attributes:
-        likes_spam: A boolean indicating if we like SPAM or not.
-        eggs: An integer count of the eggs we have laid.
-    """
-    def __init__(self, FONT_STYLE, parent=None):
-        super(UIDataloaderWindow, self).__init__(parent)
+    def __init__(self, FONT_STYLE):
+        super().__init__()
         
         self.FONT_STYLE = FONT_STYLE          
         

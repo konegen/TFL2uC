@@ -67,9 +67,9 @@ def DataloaderWindow(self, n, LastWindow):
         self.Window3.Daten_Pfad.setText(self.data_loader_path)
 
 
-    self.Window3.Daten_einlesen_Browse.clicked.connect(lambda:self.get_data_loader_path(self.Window3))
+    self.Window3.Daten_einlesen_Browse.clicked.connect(lambda:self.get_data_loader(self.Window3))
     
-    self.Window3.Next.clicked.connect(lambda:self.LoadWindow("Next", self.Window3))
+    self.Window3.Next.clicked.connect(lambda:self.LoadWindow(self.Window3))
     self.Window3.Back.clicked.connect(lambda:self.OptiWindow("Back", self.Window3))
     
     self.setCentralWidget(self.Window3)

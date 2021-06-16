@@ -7,6 +7,12 @@ from PyQt5.QtCore import *
 import pandas as pd
 
 class UICSVDataloaderWindow(QWidget):
+    """Get a preview and load CSV data. 
+
+    This GUI window shows the data format of CSV files, selected
+    from the dataloader retrain the model. You can also choose
+    how to separate the different columns.
+    """
     def __init__(self, FONT_STYLE, parent=None):
         super(UICSVDataloaderWindow, self).__init__(parent)
         
@@ -64,32 +70,74 @@ class UICSVDataloaderWindow(QWidget):
         sublayout.addWidget(self.Load_data)
         layout.addLayout(sublayout)
 
-        self.cb1 = QCheckBox('Tab stop', self)
-        self.cb1.setStyleSheet("font: 11pt " + FONT_STYLE)
-        layout.addWidget(self.cb1)
+        self.cbTab = QCheckBox('Tab stop', self)
+        self.cbTab.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.cbTab.setFixedWidth(150)
+        layout.addWidget(self.cbTab)
+        
+        self.target_col = QComboBox()
+        self.target_col.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.target_col.setFixedWidth(200)
+        self.target_col.setVisible(False)
 
-        self.cb2 = QCheckBox('Semicolon', self)
-        self.cb2.setStyleSheet("font: 11pt " + FONT_STYLE)
-        layout.addWidget(self.cb2)
+        self.cbSemicolon = QCheckBox('Semicolon', self)
+        self.cbSemicolon.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.cbSemicolon.setFixedWidth(150)
+        # layout.addWidget(self.cbSemicolon)
 
-        self.cb3 = QCheckBox('Comma', self)
-        self.cb3.setStyleSheet("font: 11pt " + FONT_STYLE)
-        layout.addWidget(self.cb3)
+        sublayout2 = QHBoxLayout()
+        sublayout2.addWidget(self.cbSemicolon)
+        sublayout2.addStretch()
+        sublayout2.addWidget(self.target_col)
+        sublayout2.addStretch()
+        sublayout2.addStretch()
+        layout.addLayout(sublayout2)
 
-        self.cb4 = QCheckBox('Space', self)
-        self.cb4.setStyleSheet("font: 11pt " + FONT_STYLE)
-        layout.addWidget(self.cb4)
+        self.numRow = QLabel()
+        self.numRow.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.numRow.setFixedWidth(200)
 
-        self.cb5 = QCheckBox('other', self)
-        self.cb5.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.cbComma = QCheckBox('Comma', self)
+        self.cbComma.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.cbComma.setFixedWidth(150)
+        # layout.addWidget(self.cbComma)
 
-        self.other_delimiter = QLineEdit()
-        self.other_delimiter.setFixedWidth(50)
-        self.other_delimiter.setMaxLength(1)
-        self.other_delimiter.setStyleSheet("font: 11pt " + FONT_STYLE)
+        sublayout3 = QHBoxLayout()
+        sublayout3.addWidget(self.cbComma)
+        sublayout3.addStretch()
+        sublayout3.addWidget(self.numRow)
+        sublayout3.addStretch()
+        sublayout3.addStretch()
+        layout.addLayout(sublayout3)
 
-        sublayout_other = QHBoxLayout()
-        sublayout_other.addWidget(self.cb5)
-        sublayout_other.addWidget(self.other_delimiter)
-        sublayout_other.addStretch()
-        layout.addLayout(sublayout_other)
+        self.numCol = QLabel()
+        self.numCol.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.numCol.setFixedWidth(200)
+
+        self.cbSpace = QCheckBox('Space', self)
+        self.cbSpace.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.cbSpace.setFixedWidth(150)
+        # layout.addWidget(self.cbSpace)
+
+        sublayout4 = QHBoxLayout()
+        sublayout4.addWidget(self.cbSpace)
+        sublayout4.addStretch()
+        sublayout4.addWidget(self.numCol)
+        sublayout4.addStretch()
+        sublayout4.addStretch()
+        layout.addLayout(sublayout4)
+
+        self.cbOther = QCheckBox('other', self)
+        self.cbOther.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.cbOther.setFixedWidth(65)
+
+        self.other_seperator = QLineEdit()
+        self.other_seperator.setFixedWidth(30)
+        self.other_seperator.setMaxLength(1)
+        self.other_seperator.setStyleSheet("font: 11pt " + FONT_STYLE)
+
+        sublayout5 = QHBoxLayout()
+        sublayout5.addWidget(self.cbOther)
+        sublayout5.addWidget(self.other_seperator)
+        sublayout5.addStretch()
+        layout.addLayout(sublayout5)

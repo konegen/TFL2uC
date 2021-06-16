@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
     from ._Helper import (
         get_output_path,
         get_model_path,
-        get_data_loader_path,
+        get_data_loader,
         set_pruning,
         set_quantization,
         set_quant_dtype,
@@ -50,7 +50,7 @@ class MainWindow(QMainWindow):
         browseCSVData,
         previewCSVData,
         loadCSVData,
-        get_delimiter
+        get_seperator
     )
 
     def __init__(self, parent=None):
@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
         self.prun_factor_conv = None
         self.quant_dtype = None
         
-        self.delimiter = None
+        self.seperator = None
         # self.data_loader_path = None
         self.df = None
 

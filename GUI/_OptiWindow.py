@@ -65,4 +65,4 @@ def nextWindow(self, optimizations):
     if optimizations:
         self.DataloaderWindow("Next", self.Window2)
     else:
-        self.LoadWindow("Next", self.Window2)
+        self.LoadWindow(self.Window2)
