@@ -70,6 +70,11 @@ class UICSVDataloaderWindow(QWidget):
         sublayout.addWidget(self.Load_data)
         layout.addLayout(sublayout)
 
+        self.separator = QLabel("Separator:")
+        self.separator.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.separator.setFixedWidth(200)
+        layout.addWidget(self.separator)
+
         self.cbTab = QCheckBox('Tab stop', self)
         self.cbTab.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.cbTab.setFixedWidth(150)
