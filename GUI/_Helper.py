@@ -22,7 +22,7 @@ def get_output_path(self, CurWindow):
     Args:
         CurWindow: GUI window from which the function is executed.
     """
-    self.output_path = QFileDialog.getExistingDirectory(self, "Select the output path", os.path.expanduser(os.getenv('USERPROFILE')))
+    self.output_path = QFileDialog.getExistingDirectory(self, "Select the output path", os.path.expanduser('~'))
     CurWindow.Output_Pfad.setText(self.output_path)
     print(CurWindow.Output_Pfad.text())
 
@@ -36,7 +36,7 @@ def get_model_path(self, CurWindow):
     Args:
         CurWindow: GUI window from which the function is executed.
     """
-    self.model_path = QFileDialog.getOpenFileName(self, "Select your model", os.path.expanduser(os.getenv('USERPROFILE')))[0]
+    self.model_path = QFileDialog.getOpenFileName(self, "Select your model", os.path.expanduser('~'))[0]
     CurWindow.Model_Pfad.setText(self.model_path)
     print(CurWindow.Model_Pfad.text())
 
@@ -52,9 +52,9 @@ def get_data_loader(self, CurWindow):
         CurWindow: GUI window from which the function is executed.
     """
     if "Select PATH with data" in CurWindow.dataloader_list.currentText():
-        self.data_loader_path = QFileDialog.getExistingDirectory(self, "Select your trainingdata path", os.path.expanduser(os.getenv('USERPROFILE')))
+        self.data_loader_path = QFileDialog.getExistingDirectory(self, "Select your trainingdata path", os.path.expanduser('~'))
     elif "Select SCRIPT with data" in CurWindow.dataloader_list.currentText():
-        self.data_loader_path = QFileDialog.getOpenFileName(self, "Select your data loader script", os.path.expanduser(os.getenv('USERPROFILE')))[0]
+        self.data_loader_path = QFileDialog.getOpenFileName(self, "Select your data loader script", os.path.expanduser('~'))[0]
     CurWindow.Daten_Pfad.setText(self.data_loader_path)
     print(CurWindow.Daten_Pfad.text())
 
