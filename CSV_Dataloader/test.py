@@ -32,7 +32,7 @@ class UICSVDataloaderWindow2(QWidget):
         self.Load_data = QPushButton('Load data')
         self.Load_data.setFixedWidth(150)
         self.Load_data.setFixedHeight(30)
-        self.Load_data.clicked.connect(self.loadCSVData)
+        self.Load_data.clicked.connect(loadCSVData)
 
         sublayout = QHBoxLayout()
         sublayout.addWidget(self.Browse)
@@ -132,8 +132,8 @@ class UICSVDataloaderWindow2(QWidget):
             
 
 
-    def loadCSVData(self):
-        return self.df
+    # def loadCSVData(self):
+    #     return self.df
 
 
     def get_seperator(self):
@@ -168,7 +168,10 @@ class UICSVDataloaderWindow2(QWidget):
             
         print(self.seperator)
 
-        
+
+def loadCSVData(self):
+    w = UICSVDataloaderWindow2()
+    w.show()            
 
 
 app = QApplication(sys.argv)

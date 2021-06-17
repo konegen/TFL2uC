@@ -14,13 +14,15 @@ class UICSVDataloaderWindow(QWidget):
     how to separate the different columns.
     """
     def __init__(self, FONT_STYLE, parent=None):
-        super(UICSVDataloaderWindow, self).__init__(parent)
+        super(UICSVDataloaderWindow, self).__init__(parent)#, Qt.WindowStaysOnTopHint)
+
+        self.setWindowModality(Qt.ApplicationModal)
         
         self.FONT_STYLE = FONT_STYLE 
 
-        # self.window_width, self.window_height = 800, 600
-        # self.resize(self.window_width, self.window_height)
-        # self.setWindowTitle('CSV dataloader')
+        self.window_width, self.window_height = 700, 400
+        self.resize(self.window_width, self.window_height)
+        self.setWindowTitle('CSV dataloader')
 
         layout = QVBoxLayout()
         self.setLayout(layout)

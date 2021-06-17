@@ -22,9 +22,7 @@ def get_output_path(self, CurWindow):
     Args:
         CurWindow: GUI window from which the function is executed.
     """
-    self.output_path = QFileDialog.getExistingDirectory(
-        self, "Select the output path", "./"
-    )
+    self.output_path = QFileDialog.getExistingDirectory(self, "Select the output path", os.path.expanduser(os.getenv('USERPROFILE')))
     CurWindow.Output_Pfad.setText(self.output_path)
     print(CurWindow.Output_Pfad.text())
 
@@ -38,7 +36,7 @@ def get_model_path(self, CurWindow):
     Args:
         CurWindow: GUI window from which the function is executed.
     """
-    self.model_path = QFileDialog.getOpenFileName(self, "Select your model", "./")[0]
+    self.model_path = QFileDialog.getOpenFileName(self, "Select your model", os.path.expanduser(os.getenv('USERPROFILE')))[0]
     CurWindow.Model_Pfad.setText(self.model_path)
     print(CurWindow.Model_Pfad.text())
 
@@ -54,13 +52,9 @@ def get_data_loader(self, CurWindow):
         CurWindow: GUI window from which the function is executed.
     """
     if "Select PATH with data" in CurWindow.dataloader_list.currentText():
-        self.data_loader_path = QFileDialog.getExistingDirectory(
-            self, "Select your trainingdata path", "./"
-        )
+        self.data_loader_path = QFileDialog.getExistingDirectory(self, "Select your trainingdata path", os.path.expanduser(os.getenv('USERPROFILE')))
     elif "Select SCRIPT with data" in CurWindow.dataloader_list.currentText():
-        self.data_loader_path = QFileDialog.getOpenFileName(
-            self, "Select your data loader script", "./"
-        )[0]
+        self.data_loader_path = QFileDialog.getOpenFileName(self, "Select your data loader script", os.path.expanduser(os.getenv('USERPROFILE')))[0]
     CurWindow.Daten_Pfad.setText(self.data_loader_path)
     print(CurWindow.Daten_Pfad.text())
 
@@ -343,12 +337,9 @@ def dataloader_pruning(datascript_path, image_height, image_width, num_channels,
         returned, because it is not one hot encoded. 
     """
     if os.path.isfile(datascript_path):
-        print("IST EINE DATEI")
         sys.path.append(os.path.dirname(datascript_path))
         datascript = __import__(os.path.splitext(os.path.basename(datascript_path))[0])
         x_train, y_train, _, _ = datascript.get_data()
-        print("SHAPE!!")
-        print(len(y_train.shape))
         if len(y_train.shape) > 1:
             label_one_hot = True
         else:
@@ -390,7 +381,7 @@ def browseCSVData(self):
     file which contains your data.
     """
     self.data_loader_path = QFileDialog.getOpenFileName(
-        self, "Select your data loader script", os.path.expanduser(os.getenv('USERPROFILE')), 'CSV(*.csv)')[0]
+        self, "Select your data loader script", os.path.expanduser(os.getenv('USERPROFILE')), 'CSV(*.csv);; Python(*.py)')[0]
     
     print(self.data_loader_path)
 
