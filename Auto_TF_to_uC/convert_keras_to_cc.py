@@ -7,7 +7,7 @@ sys.path.append("..") # Adds higher directory to python modules path.
 from GUI._Helper import dataloader_quantization
 
 
-def convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, opti, datascript_path, quant_dtype):
+def convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, optimization, data_loader_path, quant_dtype, separator, csv_target_label):
     """
     A keras model get's converter into a TensorFlow lite model.
     
@@ -15,6 +15,11 @@ def convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, op
         Keras_model_dir:     Path of the keras model
         converted_model_dir: Path where the converted TensorFlow Lite model should be stored
         model_name:          Name of converted .tflite file
+        optimization:        Selected optimization algorithms
+        data_loader_path:    Path of the folder or file with the training data
+        quant_dtype:         Data type to quantize to
+        separator:           Separator for reading a CSV file
+        csv_target_label:    Target label from the CSV file
             
     Return: 
         model_input_shape:    Shape of the inputdata of the model
@@ -28,9 +33,9 @@ def convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, op
     model_output_neurons = keras_model.layers[-1].output_shape[1]
     converter = lite.TFLiteConverter.from_keras_model(keras_model)
 
-    if "Quantization" in opti:
+    if "Quantization" in optimization:
         global x_train
-        x_train = dataloader_quantization(datascript_path, keras_model.input.shape[1], keras_model.input.shape[2])
+        x_train = dataloader_quantization(data_loader_path, keras_model.input.shape[1], keras_model.input.shape[2], separator, csv_target_label)
         print("Shape of x_train: " + str(x_train.shape))
         x_train = tf.cast(x_train, tf.float32)
         x_train = tf.data.Dataset.from_tensor_slices(x_train).batch(1)
@@ -49,6 +54,12 @@ def convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, op
     return model_input_shape, model_input_dtype, model_output_neurons
 
 def representative_dataset():
+    """
+    To execute full integer quantization the range of all floating-
+    point tensors of the model needs to get calibrated or estimated.
+    To do this the TensorFlow lite converter needs a representative
+    dataset.
+    """
     for input_value in x_train.take(500):
         # Model has only one input so each data point has one element.
         yield [input_value]

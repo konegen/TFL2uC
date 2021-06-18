@@ -23,8 +23,8 @@ def get_output_path(self, CurWindow):
         CurWindow: GUI window from which the function is executed.
     """
     self.output_path = QFileDialog.getExistingDirectory(self, "Select the output path", os.path.expanduser('~'))
-    CurWindow.Output_Pfad.setText(self.output_path)
-    print(CurWindow.Output_Pfad.text())
+    CurWindow.output_path.setText(self.output_path)
+    print(CurWindow.output_path.text())
 
 def get_model_path(self, CurWindow):
     """Get the keras model which should be converted
@@ -37,8 +37,8 @@ def get_model_path(self, CurWindow):
         CurWindow: GUI window from which the function is executed.
     """
     self.model_path = QFileDialog.getOpenFileName(self, "Select your model", os.path.expanduser('~'))[0]
-    CurWindow.Model_Pfad.setText(self.model_path)
-    print(CurWindow.Model_Pfad.text())
+    CurWindow.model_path.setText(self.model_path)
+    print(CurWindow.model_path.text())
 
 def get_data_loader(self, CurWindow):
     """Get the file or path to load your training data.
@@ -53,13 +53,14 @@ def get_data_loader(self, CurWindow):
     """
     if "Select PATH with data" in CurWindow.dataloader_list.currentText():
         self.data_loader_path = QFileDialog.getExistingDirectory(self, "Select your trainingdata path", os.path.expanduser('~'))
-    elif "Select SCRIPT with data" in CurWindow.dataloader_list.currentText():
-        self.data_loader_path = QFileDialog.getOpenFileName(self, "Select your data loader script", os.path.expanduser('~'))[0]
+    elif "Select FILE with data" in CurWindow.dataloader_list.currentText():
+        self.data_loader_path = QFileDialog.getOpenFileName(self, "Select your data loader script", os.path.expanduser('~'), 'CSV(*.csv);; Python(*.py)')[0]
     CurWindow.Daten_Pfad.setText(self.data_loader_path)
     print(CurWindow.Daten_Pfad.text())
 
     if ".csv" in self.data_loader_path:
         print("SIE HABEN EINE CSV-DATEI AUSGEWÄHLT")
+        self.CSVDataloaderWindow()
     else:
         print("KEINE CSV-DATEI")
 
@@ -270,14 +271,14 @@ def terminate_thread(self, CurWindow):
         print("Error")
 
 
-def dataloader_quantization(datascript_path, image_height, image_width):
+def dataloader_quantization(data_loader_path, image_height, image_width, separator, csv_target_label):
     """Get Training data for quantization.
 
     Checks if your training data is inside a path or a file. Extracts
     the data from the directories or the file and returns it.
 
     Args:
-        datascript_path: Path or file of training data
+        data_loader_path: Path or file of training data
         image_height:    Height of image
         image_width:     Width of image
 
@@ -286,23 +287,38 @@ def dataloader_quantization(datascript_path, image_height, image_width):
     """
     train_images = []
 
-    if os.path.isfile(datascript_path):
-        sys.path.append(os.path.dirname(datascript_path))
-        datascript = __import__(os.path.splitext(os.path.basename(datascript_path))[0])
-        x_train, _, _, _ = datascript.get_data()
+    if os.path.isfile(data_loader_path):
+        if ".csv" in data_loader_path:
+            # Hier muss das extrahieren der Daten aus der CSV Datei implemntiert werden
+            df = pd.read_csv(data_loader_path, sep=separator, header=0)
+
+            features = df.loc[:, df.columns != csv_target_label]
+
+            X_temp=[]
+            for row in features[features.columns[0]]:
+                res = row.strip('][').split(', ')
+                X_temp.append([float(x) for x in res])
+            X = np.asarray(X_temp, dtype=float)[..., np.newaxis]
+            
+            return X
+
+        else:
+            sys.path.append(os.path.dirname(data_loader_path))
+            datascript = __import__(os.path.splitext(os.path.basename(data_loader_path))[0])
+            x_train, _, _, _ = datascript.get_data()
 
         return x_train
 
-    elif os.path.isdir(datascript_path):
+    elif os.path.isdir(data_loader_path):
 
-        classes = os.listdir(datascript_path)
+        classes = os.listdir(data_loader_path)
         print("Num classes: " + str(len(classes)))
         for folders in classes:
-            if os.path.isdir(datascript_path + "/" + folders):
-                images = os.listdir(datascript_path + "/" + folders)
+            if os.path.isdir(data_loader_path + "/" + folders):
+                images = os.listdir(data_loader_path + "/" + folders)
             for i in range(0,int(500/len(classes))):
                 rand_img = random.choice(images)
-                img = mpimg.imread(datascript_path + "/" + folders + "/" + rand_img)
+                img = mpimg.imread(data_loader_path + "/" + folders + "/" + rand_img)
                 resized_image = cv2.resize(img, (image_height, image_width))
                 train_images.append(resized_image)
         
@@ -314,7 +330,7 @@ def dataloader_quantization(datascript_path, image_height, image_width):
 
 
 
-def dataloader_pruning(datascript_path, image_height, image_width, num_channels, num_classes):
+def dataloader_pruning(data_loader_path, separator, csv_target_label, image_height, image_width, num_channels, num_classes):
     """Get data for retraining the model after pruning.
 
     Checks if your data is inside a path or a file. Extracts the
@@ -323,7 +339,8 @@ def dataloader_pruning(datascript_path, image_height, image_width, num_channels,
     is a path data genarators are initialized.  
 
     Args:
-        datascript_path: Path or file of training data
+        data_loader_path: Path or file of training data
+        separator:       Delimiter to use
         image_height:    Height of image
         image_width:     Width of image
         num_channels:    Number of channels of the image
@@ -336,18 +353,33 @@ def dataloader_pruning(datascript_path, image_height, image_width, num_channels,
         and validation data is returned. Furthermore "False" is
         returned, because it is not one hot encoded. 
     """
-    if os.path.isfile(datascript_path):
-        sys.path.append(os.path.dirname(datascript_path))
-        datascript = __import__(os.path.splitext(os.path.basename(datascript_path))[0])
-        x_train, y_train, _, _ = datascript.get_data()
-        if len(y_train.shape) > 1:
-            label_one_hot = True
-        else:
-            label_one_hot = False
-            
-        return x_train, y_train, label_one_hot
+    if os.path.isfile(data_loader_path):
+        if ".csv" in data_loader_path:
+            # Hier muss das extrahieren der Daten aus der CSV Datei implemntiert werden
+            df = pd.read_csv(data_loader_path, sep=separator, header=0)
 
-    elif os.path.isdir(datascript_path):
+            features = df.loc[:, df.columns != csv_target_label]
+            X_temp=[]
+            for row in features[features.columns[0]]:
+                res = row.strip('][').split(', ')
+                X_temp.append([float(x) for x in res])
+            X = np.asarray(X_temp, dtype=float)[..., np.newaxis]
+            Y = np.array(df[csv_target_label].values).astype(np.int8)
+
+            return X, Y, False
+
+        else:
+            sys.path.append(os.path.dirname(data_loader_path))
+            datascript = __import__(os.path.splitext(os.path.basename(data_loader_path))[0])
+            x_train, y_train, _, _ = datascript.get_data()
+            if len(y_train.shape) > 1:
+                label_one_hot = True
+            else:
+                label_one_hot = False
+                
+            return x_train, y_train, label_one_hot
+
+    elif os.path.isdir(data_loader_path):
 
         print(num_channels)
 
@@ -356,18 +388,155 @@ def dataloader_pruning(datascript_path, image_height, image_width, num_channels,
         # prepare iterators
         if num_channels == 1:
             if num_classes > 2:
-                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=64, subset='validation')
             else:
-                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='validation')
         
         elif num_channels == 3:
             if num_classes > 2:
-                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=64, subset='validation')
             else:
-                train_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(datascript_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='training')
+                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='validation')
 
         return train_it, val_it, False
+
+
+
+def browseCSVData(self):
+    """Get the CSV file which contains your data.
+
+    A Browse window opens and you can navigate to the CSV
+    file which contains your data.
+    """
+    self.data_loader_path = QFileDialog.getOpenFileName(
+        self, "Select your data loader script", os.path.expanduser('~'), 'CSV(*.csv)')[0]
+    
+    print(self.data_loader_path)
+
+        
+
+def previewCSVData(self, CurWindow):
+    """Gives a preview of the CSV data structure.
+
+    Read the CSV file and separate the data according the selected
+    separators. The data is represented by a table. Additionally, a
+    drop-down list appears where the column of the data label can
+    be selected. Also the number of rows and columns of the data get
+    displayed.
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """    
+    try:
+    
+        if self.data_loader_path != None and ".csv" in self.data_loader_path:
+            self.get_separator(CurWindow)
+            if not self.separator:
+                df = pd.read_csv(self.data_loader_path, index_col=False)
+            else:
+                df = pd.read_csv(self.data_loader_path, index_col=False, sep=self.separator)
+            if df.size == 0:
+                return
+            df.fillna('', inplace=True)
+            CurWindow.table.setRowCount(df.shape[0])
+            CurWindow.table.setColumnCount(df.shape[1])
+            CurWindow.table.setHorizontalHeaderLabels(df.columns)
+            # returns pandas array object
+            for row in df.iterrows():
+                values = row[1]
+                for col_index, value in enumerate(values):
+                    # if isinstance(value, (float, int)):
+                        # value = '{0:0,}'.format(value)
+                    tableItem = QTableWidgetItem(str(value))
+                    CurWindow.table.setItem(row[0], col_index, tableItem)
+
+            CurWindow.table.setColumnWidth(2, 300)
+            CurWindow.label_col.setVisible(True)
+            CurWindow.cb_label_col.setVisible(True)
+            CurWindow.cb_label_col.clear()
+            CurWindow.cb_label_col.addItems(df.columns)
+
+            CurWindow.numRow.setText("Number of Rows:    " + str(df.shape[0]))
+            CurWindow.numCol.setText("Number of Columns: " + str(df.shape[1]))
+        
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+                
+            msg.setText("The selected file is no CSV.")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            msg.exec_()
+    
+    except:
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+            
+        msg.setText("This separator cannot be used")
+        msg.setWindowTitle("Warning")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.exec_()
+        
+
+
+def loadCSVData(self, CurWindow):
+    """Stores the target column of the CSV file and closes the window.
+    """
+    if CurWindow.cb_label_col.isVisible() == True:
+        self.csv_target = CurWindow.cb_label_col.currentText()
+        CurWindow.close()
+    else:
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+            
+        msg.setText("You have to preview the data before you can load it.")
+        msg.setWindowTitle("Warning")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.exec_()
+        return
+
+
+
+def get_separator(self, CurWindow):
+    """Read the selected separators.
+
+    Checks if the different separator check boxes are checked or
+    not. If a checkbox is selected, the corresponding separator is 
+    written to the variable "self.separator".
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
+    self.separator = None
+
+    if CurWindow.cbTab.isChecked():
+        if self.separator == None:
+            self.separator = r'\t'
+        else:
+            self.separator += r'|\t'
+    if CurWindow.cbSemicolon.isChecked():
+        if self.separator == None:
+            self.separator = ';'
+        else:
+            self.separator += '|;'
+    if CurWindow.cbComma.isChecked():
+        if self.separator == None:
+            self.separator = ','
+        else:
+            self.separator += '|,'
+    if CurWindow.cbSpace.isChecked():
+        if self.separator == None:
+            self.separator = r'\s+'
+        else:
+            self.separator += r'|\s+'
+    if CurWindow.cbOther.isChecked():
+        if self.separator == None:
+            self.separator = CurWindow.other_separator.text()
+        else:
+            self.separator += '|' + CurWindow.other_separator.text()
+        
+    print(self.separator)

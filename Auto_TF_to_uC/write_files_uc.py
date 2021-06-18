@@ -9,8 +9,10 @@ def create_project_dir(project_name, output_path, converted_model_dir, model_nam
     Creates a directory where all files of the project will be stored.
     
     Args: 
-        project_name: Name of the project which should be generated
-        output_path:  Directory where the project should be generated
+        project_name:        Name of the project which should be generated
+        output_path:         Directory where the project should be generated
+        converted_model_dir: Directory to store the converted model temporarily
+        model_name:          Name of keras model
             
     Return: 
         project_dir: Path of the project directory

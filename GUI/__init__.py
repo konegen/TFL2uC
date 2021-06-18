@@ -1,18 +1,3 @@
-"""A one line summary of the module or program, terminated by a period.
-
-Leave one blank line.  The rest of this docstring should contain an
-overall description of the module or program.  Optionally, it may also
-contain a brief description of exported classes and functions and/or usage
-examples.
-
-  Typical usage example:
-
-  foo = ClassFoo()
-  bar = foo.FunctionBar()
-"""
-
-
-
 import sys
 import os
 
@@ -24,15 +9,27 @@ from PyQt5.QtCore import *
 
 
 class MainWindow(QMainWindow):
-    """Summary of class here.
+    """Initialization of the GUI main window.
 
-    Longer class information....
-    Longer class information....
+    All initializations of the different GUI windows get imported.
+    Also all functions get from the '_Helper.py' file imported.
+    The window size and title get initialized as well as all attributes
+    needed. In addition, the GUI is started.
 
     Attributes:
-        likes_spam: A boolean indicating if we like SPAM or not.
-        eggs: An integer count of the eggs we have laid.
+        FONT_STYLE:        Font which is used in the GUI
+        project_name:      Name of the project to be created
+        output_path:       Output path of the project to be created
+        model_path:        Path of the model to convert
+        data_loader_path:  Path of the folder or file with the training data
+        optimizations:     Selected optimization algorithms
+        prun_factor_dense: Pruning factor for fully connected layers
+        prun_factor_conv:  Pruning factor for convolution layers
+        quant_dtype:       Data type to quantize to
+        separator:         Separator for reading a CSV file
+        csv_target_label:  Target label from the CSV file
     """
+    from ._CSVDataloaderWindow import CSVDataloaderWindow
     from ._DataloaderWindow import DataloaderWindow
     from ._LoadWindow import LoadWindow
     from ._OptiWindow import OptiWindow
@@ -49,7 +46,10 @@ class MainWindow(QMainWindow):
         model_pruning,
         download,
         terminate_thread,
-        # optimization_before_load
+        browseCSVData,
+        previewCSVData,
+        loadCSVData,
+        get_separator
     )
 
     def __init__(self, parent=None):
@@ -72,5 +72,8 @@ class MainWindow(QMainWindow):
         self.prun_factor_dense = None
         self.prun_factor_conv = None
         self.quant_dtype = None
+        
+        self.separator = None
+        self.csv_target_label = None
 
-        self.StartWindow()
+        self.StartWindow(None)

@@ -21,11 +21,11 @@ def CSVDataloaderWindow(self):
     model later.    
     """
 
-    self.Window4 = UICSVDataloaderWindow(self.FONT_STYLE)
+    self.Window3_1 = UICSVDataloaderWindow(self.FONT_STYLE)
 
-    self.Window4.Browse.clicked.connect(self.browseCSVData)
-    self.Window4.Preview.clicked.connect(lambda: self.previewCSVData(self.Window4))
-    self.Window4.Load_data.clicked.connect(self.loadCSVData)
+    self.Window3_1.Browse.clicked.connect(self.browseCSVData)
+    self.Window3_1.Preview.clicked.connect(lambda: self.previewCSVData(self.Window3_1))
+    self.Window3_1.Load_data.clicked.connect(lambda: self.loadCSVData(self.Window3_1))
 
-    # self.setCentralWidget(self.Window4)
-    self.Window4.show()
+    # self.setCentralWidget(self.Window3_1)
+    self.Window3_1.show()

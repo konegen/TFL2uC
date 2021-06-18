@@ -7,13 +7,18 @@ from PyQt5.QtCore import *
 
 
 class UIStartWindow(QWidget):
+    """Select project name, output path and model path. 
+
+    This GUI window has an input field and two buttons to pass
+    project name, output path and model path.
+    """
     def __init__(self, FONT_STYLE, parent=None):
         super(UIStartWindow, self).__init__(parent)
         
         self.FONT_STYLE = FONT_STYLE       
         
-        self.Projekt_Name_label = QLabel("Projectname:")
-        self.Projekt_Name_label.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.project_name_label = QLabel("Projectname:")
+        self.project_name_label.setStyleSheet("font: 12pt " + FONT_STYLE)
         
         self.Modell_einlesen_label = QLabel("Keras model:")
         self.Modell_einlesen_label.setStyleSheet("font: 12pt " + FONT_STYLE)     
@@ -35,23 +40,23 @@ class UIStartWindow(QWidget):
         self.Abstand_unten = QLabel()
         self.Abstand_unten.setFixedHeight(50)
         
-        self.Projekt_Name = QLineEdit()
-        self.Projekt_Name.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.Projekt_Name.setFixedWidth(200)
+        self.project_name = QLineEdit()
+        self.project_name.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.project_name.setFixedWidth(200)
         
-        self.Model_Pfad = QLabel("")
-        self.Model_Pfad.setFixedWidth(300)
-        self.Model_Pfad.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.Model_Pfad.setAlignment(Qt.AlignCenter)
+        self.model_path = QLabel("")
+        self.model_path.setFixedWidth(300)
+        self.model_path.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.model_path.setAlignment(Qt.AlignCenter)
         
-        self.Output_Pfad = QLabel("")
-        self.Output_Pfad.setFixedWidth(300)
-        self.Output_Pfad.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.Output_Pfad.setAlignment(Qt.AlignCenter)
+        self.output_path = QLabel("")
+        self.output_path.setFixedWidth(300)
+        self.output_path.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.output_path.setAlignment(Qt.AlignCenter)
         
-        self.Output_Pfad_Browse = QPushButton(" Output path... ", self)
-        self.Output_Pfad_Browse.setToolTip('...')
-        self.Output_Pfad_Browse.setStyleSheet("""QPushButton {
+        self.output_path_Browse = QPushButton(" Output path... ", self)
+        self.output_path_Browse.setToolTip('...')
+        self.output_path_Browse.setStyleSheet("""QPushButton {
                            font: 12pt """ + FONT_STYLE + """}
                            QPushButton::hover {
                            background-color : rgb(10, 100, 200)}
@@ -60,9 +65,9 @@ class UIStartWindow(QWidget):
                            color: white; 
                            border: black solid 1px}""")  
         
-        self.Modell_einlesen_Browse = QPushButton(" Select Model... ", self)
-        self.Modell_einlesen_Browse.setToolTip('...')
-        self.Modell_einlesen_Browse.setStyleSheet("""QPushButton {
+        self.read_model_browse = QPushButton(" Select Model... ", self)
+        self.read_model_browse.setToolTip('...')
+        self.read_model_browse.setStyleSheet("""QPushButton {
                            font: 12pt """ + FONT_STYLE + """}
                            QPushButton::hover {
                            background-color : rgb(10, 100, 200)}
@@ -80,22 +85,22 @@ class UIStartWindow(QWidget):
         self.horizontal_box = []
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[0].addStretch()
-        self.horizontal_box[0].addWidget(self.Projekt_Name_label)
+        self.horizontal_box[0].addWidget(self.project_name_label)
         self.horizontal_box[0].addStretch()
         self.horizontal_box[0].setAlignment(Qt.AlignTop)
         
         self.horizontal_box.append(QHBoxLayout())
-        self.horizontal_box[1].addWidget(self.Projekt_Name)
+        self.horizontal_box[1].addWidget(self.project_name)
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[2].addWidget(self.Abstand_oben)
         
         self.horizontal_box.append(QHBoxLayout())
-        self.horizontal_box[3].addWidget(self.Output_Pfad)
+        self.horizontal_box[3].addWidget(self.output_path)
         self.horizontal_box[3].setAlignment(Qt.AlignCenter)
         
         self.horizontal_box.append(QHBoxLayout())
-        self.horizontal_box[4].addWidget(self.Output_Pfad_Browse)
+        self.horizontal_box[4].addWidget(self.output_path_Browse)
         self.horizontal_box[4].setAlignment(Qt.AlignCenter)
         
         self.horizontal_box.append(QHBoxLayout())
@@ -113,12 +118,12 @@ class UIStartWindow(QWidget):
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[8].addStretch()
-        self.horizontal_box[8].addWidget(self.Model_Pfad)
+        self.horizontal_box[8].addWidget(self.model_path)
         self.horizontal_box[8].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[9].addStretch()
-        self.horizontal_box[9].addWidget(self.Modell_einlesen_Browse)
+        self.horizontal_box[9].addWidget(self.read_model_browse)
         self.horizontal_box[9].addStretch()
     
         self.horizontal_box.append(QHBoxLayout())

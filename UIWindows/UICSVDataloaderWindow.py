@@ -10,11 +10,11 @@ class UICSVDataloaderWindow(QWidget):
     """Get a preview and load CSV data. 
 
     This GUI window shows the data format of CSV files, selected
-    from the dataloader retrain the model. You can also choose
-    how to separate the different columns.
+    from the dataloader. You can also choose how to separate the 
+    different columns and whats the target column.
     """
     def __init__(self, FONT_STYLE, parent=None):
-        super(UICSVDataloaderWindow, self).__init__(parent)#, Qt.WindowStaysOnTopHint)
+        super(UICSVDataloaderWindow, self).__init__(parent)
 
         self.setWindowModality(Qt.ApplicationModal)
         
@@ -23,6 +23,7 @@ class UICSVDataloaderWindow(QWidget):
         self.window_width, self.window_height = 700, 400
         self.resize(self.window_width, self.window_height)
         self.setWindowTitle('CSV dataloader')
+        self.setWindowIcon(QIcon(os.path.join("Images", "Window_Icon_blue.png")))
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -30,7 +31,7 @@ class UICSVDataloaderWindow(QWidget):
         self.table = QTableWidget()
         layout.addWidget(self.table)
 
-        self.Browse = QPushButton('Browse')
+        self.Browse = QPushButton('Browse...')
         self.Browse.setFixedWidth(150)
         self.Browse.setFixedHeight(30)
         self.Browse.setStyleSheet("""QPushButton {
@@ -77,28 +78,40 @@ class UICSVDataloaderWindow(QWidget):
         self.separator.setFixedWidth(200)
         layout.addWidget(self.separator)
 
+        self.label_col = QLabel("Label column:")
+        self.label_col.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.label_col.setFixedWidth(200)
+        self.label_col.setVisible(False)
+
         self.cbTab = QCheckBox('Tab stop', self)
         self.cbTab.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.cbTab.setFixedWidth(150)
         layout.addWidget(self.cbTab)
+
+        sublayout2 = QHBoxLayout()
+        sublayout2.addWidget(self.cbTab)
+        sublayout2.addStretch()
+        sublayout2.addWidget(self.label_col)
+        sublayout2.addStretch()
+        sublayout2.addStretch()
+        layout.addLayout(sublayout2)
         
-        self.target_col = QComboBox()
-        self.target_col.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.target_col.setFixedWidth(200)
-        self.target_col.setVisible(False)
+        self.cb_label_col = QComboBox()
+        self.cb_label_col.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.cb_label_col.setFixedWidth(200)
+        self.cb_label_col.setVisible(False)
 
         self.cbSemicolon = QCheckBox('Semicolon', self)
         self.cbSemicolon.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.cbSemicolon.setFixedWidth(150)
-        # layout.addWidget(self.cbSemicolon)
 
-        sublayout2 = QHBoxLayout()
-        sublayout2.addWidget(self.cbSemicolon)
-        sublayout2.addStretch()
-        sublayout2.addWidget(self.target_col)
-        sublayout2.addStretch()
-        sublayout2.addStretch()
-        layout.addLayout(sublayout2)
+        sublayout3 = QHBoxLayout()
+        sublayout3.addWidget(self.cbSemicolon)
+        sublayout3.addStretch()
+        sublayout3.addWidget(self.cb_label_col)
+        sublayout3.addStretch()
+        sublayout3.addStretch()
+        layout.addLayout(sublayout3)
 
         self.numRow = QLabel()
         self.numRow.setStyleSheet("font: 11pt " + FONT_STYLE)
@@ -107,15 +120,14 @@ class UICSVDataloaderWindow(QWidget):
         self.cbComma = QCheckBox('Comma', self)
         self.cbComma.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.cbComma.setFixedWidth(150)
-        # layout.addWidget(self.cbComma)
 
-        sublayout3 = QHBoxLayout()
-        sublayout3.addWidget(self.cbComma)
-        sublayout3.addStretch()
-        sublayout3.addWidget(self.numRow)
-        sublayout3.addStretch()
-        sublayout3.addStretch()
-        layout.addLayout(sublayout3)
+        sublayout4 = QHBoxLayout()
+        sublayout4.addWidget(self.cbComma)
+        sublayout4.addStretch()
+        sublayout4.addWidget(self.numRow)
+        sublayout4.addStretch()
+        sublayout4.addStretch()
+        layout.addLayout(sublayout4)
 
         self.numCol = QLabel()
         self.numCol.setStyleSheet("font: 11pt " + FONT_STYLE)
@@ -124,27 +136,26 @@ class UICSVDataloaderWindow(QWidget):
         self.cbSpace = QCheckBox('Space', self)
         self.cbSpace.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.cbSpace.setFixedWidth(150)
-        # layout.addWidget(self.cbSpace)
 
-        sublayout4 = QHBoxLayout()
-        sublayout4.addWidget(self.cbSpace)
-        sublayout4.addStretch()
-        sublayout4.addWidget(self.numCol)
-        sublayout4.addStretch()
-        sublayout4.addStretch()
-        layout.addLayout(sublayout4)
+        sublayout5 = QHBoxLayout()
+        sublayout5.addWidget(self.cbSpace)
+        sublayout5.addStretch()
+        sublayout5.addWidget(self.numCol)
+        sublayout5.addStretch()
+        sublayout5.addStretch()
+        layout.addLayout(sublayout5)
 
         self.cbOther = QCheckBox('other', self)
         self.cbOther.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.cbOther.setFixedWidth(65)
 
-        self.other_seperator = QLineEdit()
-        self.other_seperator.setFixedWidth(30)
-        self.other_seperator.setMaxLength(1)
-        self.other_seperator.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.other_separator = QLineEdit()
+        self.other_separator.setFixedWidth(30)
+        self.other_separator.setMaxLength(1)
+        self.other_separator.setStyleSheet("font: 11pt " + FONT_STYLE)
 
-        sublayout5 = QHBoxLayout()
-        sublayout5.addWidget(self.cbOther)
-        sublayout5.addWidget(self.other_seperator)
-        sublayout5.addStretch()
-        layout.addLayout(sublayout5)
+        sublayout6 = QHBoxLayout()
+        sublayout6.addWidget(self.cbOther)
+        sublayout6.addWidget(self.other_separator)
+        sublayout6.addStretch()
+        layout.addLayout(sublayout6)

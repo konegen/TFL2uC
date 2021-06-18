@@ -7,6 +7,12 @@ from PyQt5.QtCore import *
 
 
 class UIDataloaderWindow(QWidget):
+    """Select a dataloader for optimization. 
+
+    This GUI window has a dropdown menue to choose if your training
+    data is in directories or a file. Next you can search the training
+    data with a browse window.
+    """
     def __init__(self, FONT_STYLE, parent=None):
         super(UIDataloaderWindow, self).__init__(parent)
         
@@ -39,7 +45,7 @@ class UIDataloaderWindow(QWidget):
 
         self.dataloader_list = QComboBox()
         self.dataloader_list.setFixedWidth(170)
-        self.dataloader_list.addItems(["Select PATH with data", "Select SCRIPT with data"])
+        self.dataloader_list.addItems(["Select PATH with data", "Select FILE with data"])
 
         self.Abstand_dataloader_list = QLabel("")
         self.Abstand_dataloader_list.setFixedWidth(170) 

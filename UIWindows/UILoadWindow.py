@@ -13,18 +13,20 @@ from Threads.Prune_model_thread import *
 
 
 class UILoadWindow(QWidget):
-    def __init__(self, FONT_STYLE, model_path, project_name, output_path, datascript_path, prun_factor_dense, prun_factor_conv, optimizations, quant_dtype, parent=None):
+    def __init__(self, FONT_STYLE, model_path, project_name, output_path, data_loader_path, prun_factor_dense, prun_factor_conv, optimizations, quant_dtype, separator, csv_target_label, parent=None):
         super(UILoadWindow, self).__init__(parent)
         
         self.FONT_STYLE = FONT_STYLE 
         self.model_path = model_path       
         self.project_name = project_name
         self.output_path = output_path
-        self.datascript_path = datascript_path
+        self.data_loader_path = data_loader_path
         self.prun_factor_dense = prun_factor_dense
         self.prun_factor_conv = prun_factor_conv
         self.optimizations = optimizations
         self.quant_dtype = quant_dtype
+        self.separator = separator
+        self.csv_target_label = csv_target_label
         
         
         self.label = QLabel("Create Projectfiles")
@@ -98,11 +100,11 @@ class UILoadWindow(QWidget):
         
         self.loading_images = Loading_images(self.Loadpng)
         
-        self.prune_model = Prune_model(self.datascript_path, self.model_path, self.prun_factor_dense, self.prun_factor_conv, self.optimizations)
+        self.prune_model = Prune_model(self.data_loader_path, self.model_path, self.prun_factor_dense, self.prun_factor_conv, self.optimizations, self.separator, self.csv_target_label)
 
         
         if 'Pruning' in optimizations:
-            self.conv_build_load = Convert_Build_Loading(str(self.model_path[:-3]) + '_pruned.h5', self.project_name, self.output_path, self.optimizations, self.datascript_path, self.quant_dtype)
+            self.conv_build_load = Convert_Build(str(self.model_path[:-3]) + '_pruned.h5', self.project_name, self.output_path, self.optimizations, self.data_loader_path, self.quant_dtype, self.separator, self.csv_target_label)
         else:
-            self.conv_build_load = Convert_Build_Loading(self.model_path, self.project_name, self.output_path, self.optimizations, self.datascript_path, self.quant_dtype)
+            self.conv_build_load = Convert_Build(self.model_path, self.project_name, self.output_path, self.optimizations, self.data_loader_path, self.quant_dtype, self.separator, self.csv_target_label)
             

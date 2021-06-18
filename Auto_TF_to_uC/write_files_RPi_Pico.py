@@ -6,7 +6,8 @@ import pathlib
 
 def create_project_dir(project_name, output_path):
     """
-    Creates a directory where all files of the project will be stored.
+    Creates a directory where all files of the Raspberry Pi Pico 
+    project will be stored.
     
     Args: 
         project_name: Name of the project which should be generated

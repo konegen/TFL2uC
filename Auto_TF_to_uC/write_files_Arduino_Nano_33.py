@@ -6,7 +6,8 @@ import pathlib
 
 def create_project_dir(project_name, output_path):
     """
-    Creates a directory where all files of the project will be stored.
+    Creates a directory where all files of the Arduino Nano 33 
+    project will be stored.
     
     Args: 
         project_name: Name of the project which should be generated
