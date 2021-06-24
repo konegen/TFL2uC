@@ -43,15 +43,6 @@ The design of the individual windows of the GUI are defined in these files.
 
 | File name              | Description   |
 | ---------------------- | ------------- |
-| UIHelperWindow.py      | The purpose of this window is to help the user select the right target platform based on a few parameters such as design, price or performance.                                                   |
 | UILoadWindow.py        | The last window of the GUI in which the project is finally created and loaded onto the microcontroller.                                                   |
-| UIMarcusWindow.py      | ---                                                   |
-| UIMarcusWindow1.py     | ---                                                   |
-| UIMarcusWindow2.py     | ---                                                   |
-| UIMarcusWindow3.py     | ---                                                   |
-| UIMarcusWindow4.py     | ---                                                   |
-| UIMarcusWindow5.py     | ---                                                   |
 | UIOptiWindow.py        | The window where the optimizations (pruning, quantization, knowledge distillation and huffman coding are optional) of the neural network are selected.                                                                       |
-| UIRestrictionWindow.py | ---                                                   |
 | UIStartWindow.py       | Here the project name, output path of the project, the Keras model and if the neural network is to be optimized a script for re-training the model is passed. |
-| UITargetWindow.py      | In this window the target platform on which the neural network is to be executed is selected.                                                 |
