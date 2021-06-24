@@ -7,13 +7,13 @@ sys.path.append("..") # Adds higher directory to python modules path.
 from GUI._Helper import dataloader_quantization
 
 
-def convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, optimization, data_loader_path, quant_dtype, separator, csv_target_label):
+def convert_model_to_tflite(Keras_model_dir, project_dir, model_name, optimization, data_loader_path, quant_dtype, separator, csv_target_label):
     """
     A keras model get's converter into a TensorFlow lite model.
     
     Args: 
         Keras_model_dir:     Path of the keras model
-        converted_model_dir: Path where the converted TensorFlow Lite model should be stored
+        project_dir:         Path of the project
         model_name:          Name of converted .tflite file
         optimization:        Selected optimization algorithms
         data_loader_path:    Path of the folder or file with the training data
@@ -48,7 +48,7 @@ def convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, op
             converter.inference_output_type = tf.int8  # or tf.uint8
         
     tflite_model = converter.convert()
-    open(converted_model_dir + model_name + ".tflite", "wb").write(tflite_model)
+    open(project_dir + "/" + model_name + ".tflite", "wb").write(tflite_model)
     return model_input_shape, model_output_neurons
 
 def representative_dataset():
@@ -72,7 +72,7 @@ def convert_model_to_cpp(converted_model_dir, model_name, project_dir):
         model_name:          Name of the model
         project_dir:         Directory of the project where the C array model should be stored
     """
-    with open(converted_model_dir + model_name + '.tflite', 'rb') as f:
+    with open(project_dir + "/" + model_name + '.tflite', 'rb') as f:
         content = f.read().hex()
         result = bytearray.fromhex(content)
         with open(project_dir + "/src/" + model_name + "_data.cc", "wb") as w:

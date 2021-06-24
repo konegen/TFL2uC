@@ -671,7 +671,7 @@ def pruning_for_acc(keras_model, x_train, y_train, x_test, y_test, comp, pruning
 
     
     for i in range(5,100,5):
-        model = prune_model(original_model_acc, prun_factor_dense=10, prun_factor_conv=10, metric='L1', comp=None, num_classes=None, label_one_hot=None)
+        model = prune_model(original_model_acc, prun_factor_dense=i, prun_factor_conv=i, metric='L1', comp=None, num_classes=None, label_one_hot=None)
         
         train_epochs = 10
         callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)

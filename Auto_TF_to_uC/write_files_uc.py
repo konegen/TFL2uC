@@ -31,8 +31,6 @@ def create_project_dir(project_name, output_path, converted_model_dir, model_nam
         os.mkdir(project_dir)
         os.mkdir(project_dir + "/src")
         os.mkdir(project_dir + "/inc")
-        if "_pruned" in model_name:
-            os.mkdir(project_dir + "/pruned_keras_model")
         
     return project_dir
 
@@ -198,4 +196,4 @@ def pruned_keras_model(Keras_model_dir, project_dir, model_name):
         project_dir:     Path of the project directory where the file should be created
         model_name:      Name of the keras model
     """
-    shutil.copy(Keras_model_dir, project_dir + "/pruned_keras_model/" + model_name + ".h5")
+    shutil.copy(Keras_model_dir, project_dir + "/" + model_name + ".h5")
