@@ -6,6 +6,7 @@ from tensorflow.keras.models import Model
 import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow as tf
+import os
 
 
 def get_layer_shape_dense(new_model_param,layer):	
@@ -643,7 +644,7 @@ def pruning(keras_model, x_train, y_train,comp,fit, prun_factor_dense=10, prun_f
     return pruned_model
 
 
-def pruning_for_acc(keras_model, x_train, y_train, x_test, y_test, comp,fit ,pruning_acc=None, max_acc_loss=1):
+def pruning_for_acc(keras_model, x_train, y_train, x_test, y_test, comp, pruning_acc=None, max_acc_loss=1):
     """
     A given keras model gets pruned. Either an accuracy value (in %) can be specified, which 
     the minimized model must still achieve. Or the maximum loss of accuracy (in %) that 
@@ -662,13 +663,20 @@ def pruning_for_acc(keras_model, x_train, y_train, x_test, y_test, comp,fit ,pru
     Return: 
         pruned_model: New model after pruning and retraining
     """
-    
+
+
     original_model = load_model(keras_model)
     original_model.compile(**comp)
     original_model_acc = original_model.evaluate(x_test,y_test)[-1]
+
     
     for i in range(5,100,5):
-        model = pruning(original_model, x_train, y_train,comp,fit, prun_factor_dense=i, prun_factor_conv=i)
+        model = prune_model(original_model_acc, prun_factor_dense=10, prun_factor_conv=10, metric='L1', comp=None, num_classes=None, label_one_hot=None)
+        
+        train_epochs = 10
+        callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+
+        model.fit(x=x_train, y=y_train, batch_size=64, validation_split=0.2, epochs=train_epochs, callbacks=[callback])
         
         if pruning_acc != None:
             if model.evaluate(x_test,y_test)[-1] < pruning_acc:
@@ -687,7 +695,7 @@ def pruning_for_acc(keras_model, x_train, y_train, x_test, y_test, comp,fit ,pru
     return pruned_model
     
     
-def prune_model(keras_model, prun_factor_dense=10, prun_factor_conv=10,metric='L1',comp=None,num_classes=None, label_one_hot=None):
+def prune_model(keras_model, prun_factor_dense=10, prun_factor_conv=10, metric='L1', comp=None, num_classes=None, label_one_hot=None):
     """
     A given keras model get pruned. The factor for dense and conv says how many percent
     of the dense and conv layers should be deleted. After pruning the model will be

@@ -23,13 +23,11 @@ def convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, op
             
     Return: 
         model_input_shape:    Shape of the inputdata of the model
-        model_input_dtype:    Dtype of the inputdata of the model
         model_output_neurons: Number of neurons in the output layer
     """
     keras_model = Keras_model_dir
     keras_model = tf.keras.models.load_model(keras_model)
     model_input_shape = keras_model.input.shape
-    model_input_dtype = keras_model.input.dtype
     model_output_neurons = keras_model.layers[-1].output_shape[1]
     converter = lite.TFLiteConverter.from_keras_model(keras_model)
 
@@ -51,7 +49,7 @@ def convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, op
         
     tflite_model = converter.convert()
     open(converted_model_dir + model_name + ".tflite", "wb").write(tflite_model)
-    return model_input_shape, model_input_dtype, model_output_neurons
+    return model_input_shape, model_output_neurons
 
 def representative_dataset():
     """

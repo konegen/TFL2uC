@@ -29,14 +29,14 @@ def convert_and_write(Keras_model_dir, project_name, output_path, optimizations,
     project_dir = create_project_dir(project_name, output_path, converted_model_dir, model_name)
     
     
-    model_input_shape, model_input_dtype, model_output_neurons = convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, optimizations, data_loader_path, quant_dtype, separator, csv_target_label)
+    model_input_shape, model_output_neurons = convert_model_to_tflite(Keras_model_dir, converted_model_dir, model_name, optimizations, data_loader_path, quant_dtype, separator, csv_target_label)
     convert_model_to_cpp(converted_model_dir, model_name, project_dir)
     
     for i in range(1,len(model_input_shape)):
         model_input_neurons = model_input_neurons * model_input_shape[i]
     
     
-    main_functions(project_dir, model_name, model_input_neurons, model_output_neurons, model_input_dtype, model_input_shape, len(model_input_shape))
+    main_functions(project_dir, model_name, model_input_neurons, model_output_neurons, quant_dtype, model_input_shape, len(model_input_shape))
     TensorFlow_library(project_dir)
     shutil.rmtree(converted_model_dir)
     if 'Pruning' in optimizations:
