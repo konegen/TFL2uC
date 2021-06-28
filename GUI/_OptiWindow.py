@@ -66,6 +66,9 @@ def OptiWindow(self, n, LastWindow):
     self.Window2.Pruning.toggled.connect(lambda:self.set_pruning(self.Window2))
     self.Window2.Quantization.toggled.connect(lambda:self.set_quantization(self.Window2))
     
+    self.Window2.prun_fac.clicked.connect(lambda:self.set_prun_type("Factor", self.Window2))
+    self.Window2.prun_acc.clicked.connect(lambda:self.set_prun_type("Accuracy", self.Window2))
+    
     self.Window2.quant_int.clicked.connect(lambda:self.set_quant_dtype("int8 with float fallback", self.Window2))
     self.Window2.quant_int_only.clicked.connect(lambda:self.set_quant_dtype("int8 only", self.Window2))
     

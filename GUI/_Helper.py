@@ -4,6 +4,7 @@ import matplotlib.image as mpimg
 import numpy as np
 import random
 import cv2
+import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import csv
 import pandas as pd
@@ -79,34 +80,27 @@ def set_pruning(self, CurWindow):
         if not "Pruning" in self.optimizations:
             self.optimizations.append("Pruning")
             print(self.optimizations)
-        if self.prun_factor_dense == None and self.prun_factor_conv == None:
-            CurWindow.Pruning_Dense.setText("10")
-            CurWindow.Pruning_Conv.setText("10")
-        else:
-            CurWindow.Pruning_Dense.setText(str(self.prun_factor_dense))
-            CurWindow.Pruning_Conv.setText(str(self.prun_factor_conv))
-        CurWindow.Pruning_Dense.setVisible(True)
-        CurWindow.Pruning_Conv.setVisible(True)
-        CurWindow.Pruning_Conv_label.setVisible(True)
-        CurWindow.Pruning_Dense_label.setVisible(True)
+        if self.prun_type != None:
+            if "Factor" in self.prun_type:
+                CurWindow.prun_fac.setChecked(True)
+                CurWindow.prun_acc.setChecked(False)
+            elif "Accuracy" in self.prun_type:
+                CurWindow.prun_fac.setChecked(False)
+                CurWindow.prun_acc.setChecked(True)
+        CurWindow.prun_fac.setVisible(True)
+        CurWindow.prun_acc.setVisible(True)
 
-        # CurWindow.Pruning.setIconSize(QSize(100, 100))
-        # CurWindow.Pruning.setGeometry(145, 85, 120, 120)
+        # CurWindow.Quantization.setIconSize(QSize(100, 100))
+        # CurWindow.Quantization.setGeometry(540, 85, 120, 120)
 
     else:
         if "Pruning" in self.optimizations:
             self.optimizations.remove("Pruning")
             print(self.optimizations)
-        try:
-            self.prun_factor_dense = int(CurWindow.Pruning_Dense.text())
-            self.prun_factor_conv = int(CurWindow.Pruning_Conv.text())
-        except:
-            self.prun_factor_dense = None
-            self.prun_factor_conv = None
-        CurWindow.Pruning_Dense.setVisible(False)
-        CurWindow.Pruning_Conv.setVisible(False)
-        CurWindow.Pruning_Conv_label.setVisible(False)
-        CurWindow.Pruning_Dense_label.setVisible(False)
+        CurWindow.prun_fac.setChecked(False)
+        CurWindow.prun_acc.setChecked(False)
+        CurWindow.prun_fac.setVisible(False)
+        CurWindow.prun_acc.setVisible(False)    
 
         # CurWindow.Pruning.setIconSize(QSize(150, 150))
         # CurWindow.Pruning.setGeometry(120, 85, 170, 170)
@@ -149,6 +143,73 @@ def set_quantization(self, CurWindow):
 
         # CurWindow.Quantization.setIconSize(QSize(150, 150))
         # CurWindow.Quantization.setGeometry(515, 85, 170, 170)
+
+def set_prun_type(self, prun_type, CurWindow):
+    """Sets the pruning type.
+
+    Checks which button of the pruning type is pressed and
+    sets it as pruning type.
+
+    Args:
+        prun_type: Defines the pruning type.
+        CurWindow: GUI window from which the function is executed.
+    """
+    if "Factor" in prun_type:
+        CurWindow.prun_acc.setChecked(False)
+        if CurWindow.prun_fac.isChecked() == False:
+            self.prun_type = None
+            try:
+                self.prun_factor_dense = int(CurWindow.Pruning_Dense.text())
+                self.prun_factor_conv = int(CurWindow.Pruning_Conv.text())
+            except:
+                self.prun_factor_dense = None
+                self.prun_factor_conv = None
+            CurWindow.Pruning_Dense.setVisible(False)
+            CurWindow.Pruning_Conv.setVisible(False)
+            CurWindow.Pruning_Conv_label.setVisible(False)
+            CurWindow.Pruning_Dense_label.setVisible(False)
+        else:
+            self.prun_type = prun_type
+            if self.prun_factor_dense == None and self.prun_factor_conv == None:
+                CurWindow.Pruning_Dense.setText("10")
+                CurWindow.Pruning_Conv.setText("10")
+            else:
+                CurWindow.Pruning_Dense.setText(str(self.prun_factor_dense))
+                CurWindow.Pruning_Conv.setText(str(self.prun_factor_conv))
+            CurWindow.Pruning_Dense.setVisible(True)
+            CurWindow.Pruning_Conv.setVisible(True)
+            CurWindow.Pruning_Conv_label.setVisible(True)
+            CurWindow.Pruning_Dense_label.setVisible(True)
+            
+            CurWindow.min_acc.setVisible(False)
+            CurWindow.acc_loss.setVisible(False)
+
+    elif "Accuracy" in prun_type:
+        CurWindow.prun_fac.setChecked(False)
+        if CurWindow.prun_acc.isChecked() == False:
+            self.prun_type = None
+            
+            CurWindow.min_acc.setVisible(False)
+            CurWindow.acc_loss.setVisible(False)
+        else:
+            self.prun_type = prun_type
+            
+            CurWindow.min_acc.setVisible(True)
+            CurWindow.acc_loss.setVisible(True)
+
+            try:
+                self.prun_factor_dense = int(CurWindow.Pruning_Dense.text())
+                self.prun_factor_conv = int(CurWindow.Pruning_Conv.text())
+            except:
+                self.prun_factor_dense = None
+                self.prun_factor_conv = None
+            CurWindow.Pruning_Dense.setVisible(False)
+            CurWindow.Pruning_Conv.setVisible(False)
+            CurWindow.Pruning_Conv_label.setVisible(False)
+            CurWindow.Pruning_Dense_label.setVisible(False)
+
+
+    print(self.prun_type)
 
 def set_quant_dtype(self, dtype, CurWindow):
     """Sets the quantization type.
@@ -388,19 +449,19 @@ def dataloader_pruning(data_loader_path, separator, csv_target_label, image_heig
         # prepare iterators
         if num_channels == 1:
             if num_classes > 2:
-                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=128, subset='training')
+                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='sparse', batch_size=128, subset='validation')
             else:
-                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=128, subset='training')
+                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='grayscale', class_mode='binary', batch_size=128, subset='validation')
         
         elif num_channels == 3:
             if num_classes > 2:
-                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=128, subset='training')
+                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='sparse', batch_size=128, subset='validation')
             else:
-                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='training')
-                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=64, subset='validation')
+                train_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=128, subset='training')
+                val_it = train_datagen.flow_from_directory(data_loader_path, target_size=(image_height, image_width), color_mode='rgb', class_mode='binary', batch_size=128, subset='validation')
 
         return train_it, val_it, False
 
@@ -540,3 +601,15 @@ def get_separator(self, CurWindow):
             self.separator += '|' + CurWindow.other_separator.text()
         
     print(self.separator)
+
+
+
+class ThresholdCallback(tf.keras.callbacks.Callback):
+    def __init__(self, threshold):
+        super(ThresholdCallback, self).__init__()
+        self.threshold = threshold
+
+    def on_epoch_end(self, logs=None): 
+        val_acc = logs["val_accuracy"]
+        if val_acc >= self.threshold:
+            self.model.stop_training = True

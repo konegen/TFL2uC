@@ -40,6 +40,16 @@ class UILoadWindow(QWidget):
         img = QPixmap(os.path.join('Images','GUI_loading_images', 'GUI_load_0.png'))
         self.Loadpng.setPixmap(img)
         
+        self.model_memory_label = QLabel("Model memory:")
+        self.model_memory_label.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.model_memory_label.setAlignment(Qt.AlignCenter)
+        
+        self.model_memory = QLineEdit(self)
+        self.model_memory.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.model_memory.setFixedWidth(90)
+        self.model_memory.setFixedHeight(30)
+        self.model_memory.setAlignment(Qt.AlignCenter)
+        
         self.Schritt = QLabel(self)
         Schritt_img = QPixmap(os.path.join('Images', 'GUI_progress_bar_Demonstrator', 'GUI_demonstrator_step_4.png'))
         self.Schritt.setPixmap(Schritt_img)
@@ -81,7 +91,11 @@ class UILoadWindow(QWidget):
         self.horizontal_box[1].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
-        self.horizontal_box[2].addWidget(self.Finish)
+        # self.horizontal_box[2].addWidget(self.Finish)
+        self.horizontal_box[2].addStretch()
+        self.horizontal_box[2].addWidget(self.model_memory_label)
+        self.horizontal_box[2].addWidget(self.model_memory)
+        self.horizontal_box[2].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[3].addWidget(self.Back)
