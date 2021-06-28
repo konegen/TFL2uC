@@ -32,7 +32,7 @@ class UIOptiWindow(QWidget):
         
         self.Button_Platzhalter = QLabel()
         self.Button_Platzhalter.setFixedWidth(90)
-        self.Button_Platzhalter.setFixedHeight(30)
+        self.Button_Platzhalter.setFixedHeight(40)
         
         self.Schritt = QLabel(self)
         Schritt_img = QPixmap(os.path.join('Images', 'GUI_progress_bar_Demonstrator', 'GUI_demonstrator_step_2.png'))
@@ -54,7 +54,7 @@ class UIOptiWindow(QWidget):
         self.Pruning.setIcon(QIcon(os.path.join('Images', 'Pruning_Button.png')))
         self.Pruning.setIconSize(QSize(260, 260))
         self.Pruning.setCheckable(True)
-        self.Pruning.setGeometry(80, 125, 280, 280)
+        self.Pruning.setGeometry(80, 110, 280, 280)
         self.Pruning.setToolTip('Optimize the network through pruning. This\n'
                                 'involves reducing the size of the network\n'
                                 'by removing neurons from the fully connected\n'
@@ -77,7 +77,7 @@ class UIOptiWindow(QWidget):
         self.Quantization.setIcon(QIcon(os.path.join('Images', 'Quantization_Button.png')))
         self.Quantization.setIconSize(QSize(260, 260))
         self.Quantization.setCheckable(True)
-        self.Quantization.setGeometry(440, 125, 280, 280)
+        self.Quantization.setGeometry(440, 110, 280, 280)
         self.Quantization.setToolTip('Optimize the network through quantization.\n'
                                      'This reduces the number of bits required\n'
                                      'to represent the value of the weights.\n'
@@ -95,18 +95,57 @@ class UIOptiWindow(QWidget):
                            background-color : rgb(10, 100, 200);
                            }""")
         
-        
+        self.prun_fac = QPushButton("Factor", self)
+        self.prun_fac.setFixedWidth(90)
+        self.prun_fac.setFixedHeight(30)
+        self.prun_fac.setCheckable(True)
+        self.prun_fac.setVisible(False)
+        self.prun_fac.setToolTip('This quantization approach converts all weights\n'
+                                     'to int8 values. But the input and output\n'
+                                     'still remain 32-bit float.')
+        self.prun_fac.setStyleSheet("""QPushButton {
+                           font: 9pt """ + FONT_STYLE + """}
+                           QToolTip { 
+                           background-color : rgb(53, 53, 53);
+                           color: white; 
+                           border: black solid 1px
+                           }
+                           QPushButton::hover
+                           {
+                           background-color : rgb(10, 100, 200);
+                           }""")
+
+        self.prun_acc = QPushButton("Accuracy", self)
+        self.prun_acc.setFixedWidth(90)
+        self.prun_acc.setFixedHeight(30)
+        self.prun_acc.setCheckable(True)
+        self.prun_acc.setVisible(False)
+        self.prun_acc.setToolTip('This quantization approach converts all weights\n'
+                                     'to int8 values. But the input and output\n'
+                                     'still remain 32-bit float.')
+        self.prun_acc.setStyleSheet("""QPushButton {
+                           font: 9pt """ + FONT_STYLE + """}
+                           QToolTip { 
+                           background-color : rgb(53, 53, 53);
+                           color: white; 
+                           border: black solid 1px
+                           }
+                           QPushButton::hover
+                           {
+                           background-color : rgb(10, 100, 200);
+                           }""")
+
         self.Pruning_Dense_label = QLabel("Pruningfactor\nDense layer", self)
         self.Pruning_Dense_label.setStyleSheet("font: 9pt " + FONT_STYLE)
         self.Pruning_Dense_label.setFixedWidth(90)
-        self.Pruning_Dense_label.setFixedHeight(30)
+        self.Pruning_Dense_label.setFixedHeight(40)
         self.Pruning_Dense_label.setAlignment(Qt.AlignCenter)
         self.Pruning_Dense_label.setVisible(False)
         
         self.Pruning_Conv_label = QLabel("Pruningfactor\nConv layer", self)
         self.Pruning_Conv_label.setStyleSheet("font: 9pt " + FONT_STYLE)
         self.Pruning_Conv_label.setFixedWidth(90)
-        self.Pruning_Conv_label.setFixedHeight(30)
+        self.Pruning_Conv_label.setFixedHeight(40)
         self.Pruning_Conv_label.setAlignment(Qt.AlignCenter)
         self.Pruning_Conv_label.setVisible(False)
         
@@ -123,6 +162,18 @@ class UIOptiWindow(QWidget):
         self.Pruning_Conv.setFixedHeight(30)
         self.Pruning_Conv.setAlignment(Qt.AlignCenter)
         self.Pruning_Conv.setVisible(False)
+
+        self.min_acc = QCheckBox('Mininmal\naccuracy', self)
+        self.min_acc.setStyleSheet("font: 9pt " + FONT_STYLE)
+        self.min_acc.setFixedWidth(90)
+        self.min_acc.setFixedHeight(40)
+        self.min_acc.setVisible(False)
+
+        self.acc_loss = QCheckBox('Accuracy\nloss', self)
+        self.acc_loss.setStyleSheet("font: 9pt " + FONT_STYLE)
+        self.acc_loss.setFixedWidth(90)
+        self.acc_loss.setFixedHeight(40)
+        self.acc_loss.setVisible(False)
 
         self.quant_int = QPushButton("int8+float32", self)
         self.quant_int.setFixedWidth(90)
@@ -177,39 +228,50 @@ class UIOptiWindow(QWidget):
         self.horizontal_box[1].setAlignment(Qt.AlignCenter)
         
         self.horizontal_box.append(QHBoxLayout())
+        self.horizontal_box[2].addWidget(self.Abstand)
+        self.horizontal_box[2].setAlignment(Qt.AlignCenter)
+        
+        self.horizontal_box.append(QHBoxLayout())
         sublayout = QGridLayout()
-        sublayout.addWidget(self.Pruning_Dense_label, 0, 0, Qt.AlignBottom)
-        sublayout.addWidget(self.Abstand_label, 0, 1, Qt.AlignCenter)
-        sublayout.addWidget(self.Pruning_Conv_label, 0, 2, Qt.AlignBottom)
-        sublayout.addWidget(self.Abstand, 0, 3, Qt.AlignCenter)
-        sublayout.addWidget(self.Button_Platzhalter, 0, 4, Qt.AlignCenter)
-        sublayout.addWidget(self.Abstand_label, 0, 5, Qt.AlignCenter)
-        sublayout.addWidget(self.Button_Platzhalter, 0, 6, Qt.AlignCenter)
-        sublayout.addWidget(self.Pruning_Dense, 1, 0, Qt.AlignCenter)
+        sublayout.addWidget(self.prun_fac, 0, 0, Qt.AlignBottom)
+        sublayout.addWidget(self.Abstand_label, 0, 1, Qt.AlignBottom)
+        sublayout.addWidget(self.prun_acc, 0, 2, Qt.AlignBottom)
+        sublayout.addWidget(self.Abstand, 0, 3, Qt.AlignBottom)
+        sublayout.addWidget(self.quant_int, 0, 4, Qt.AlignBottom)
+        sublayout.addWidget(self.Abstand_label, 0, 5, Qt.AlignBottom)
+        sublayout.addWidget(self.quant_int_only, 0, 6, Qt.AlignBottom)
+        sublayout.addWidget(self.Pruning_Dense_label, 1, 0, Qt.AlignBottom)
+        sublayout.addWidget(self.min_acc, 1, 0, Qt.AlignBottom)
         sublayout.addWidget(self.Abstand_label, 1, 1, Qt.AlignCenter)
-        sublayout.addWidget(self.Pruning_Conv, 1, 2, Qt.AlignCenter)
+        sublayout.addWidget(self.Pruning_Conv_label, 1, 2, Qt.AlignBottom)
+        sublayout.addWidget(self.acc_loss, 1, 2, Qt.AlignBottom)
         sublayout.addWidget(self.Abstand, 1, 3, Qt.AlignCenter)
-        sublayout.addWidget(self.quant_int, 1, 4, Qt.AlignCenter)
-        # sublayout.addWidget(self.Abstand_label, 1, 4, Qt.AlignCenter)
+        sublayout.addWidget(self.Button_Platzhalter, 1, 4, Qt.AlignCenter)
         sublayout.addWidget(self.Abstand_label, 1, 5, Qt.AlignCenter)
-        # sublayout.addWidget(self.Abstand_label, 1, 6, Qt.AlignCenter)
-        sublayout.addWidget(self.quant_int_only, 1, 6, Qt.AlignCenter)
-        sublayout.addWidget(self.Button_Platzhalter, 2, 0, Qt.AlignCenter)
+        sublayout.addWidget(self.Button_Platzhalter, 1, 6, Qt.AlignCenter)
+        sublayout.addWidget(self.Pruning_Dense, 2, 0, Qt.AlignCenter)
         sublayout.addWidget(self.Abstand_label, 2, 1, Qt.AlignCenter)
-        sublayout.addWidget(self.Button_Platzhalter, 2, 2, Qt.AlignCenter)
+        sublayout.addWidget(self.Pruning_Conv, 2, 2, Qt.AlignCenter)
         sublayout.addWidget(self.Abstand, 2, 3, Qt.AlignCenter)
         sublayout.addWidget(self.Button_Platzhalter, 2, 4, Qt.AlignCenter)
         sublayout.addWidget(self.Abstand_label, 2, 5, Qt.AlignCenter)
         sublayout.addWidget(self.Button_Platzhalter, 2, 6, Qt.AlignCenter)
+        sublayout.addWidget(self.Button_Platzhalter, 3, 0, Qt.AlignCenter)
+        sublayout.addWidget(self.Abstand_label, 3, 1, Qt.AlignCenter)
+        sublayout.addWidget(self.Button_Platzhalter, 3, 2, Qt.AlignCenter)
+        sublayout.addWidget(self.Abstand, 3, 3, Qt.AlignCenter)
+        sublayout.addWidget(self.Button_Platzhalter, 3, 4, Qt.AlignCenter)
+        sublayout.addWidget(self.Abstand_label, 3, 5, Qt.AlignCenter)
+        sublayout.addWidget(self.Button_Platzhalter, 3, 6, Qt.AlignCenter)
         sublayout.setAlignment(Qt.AlignCenter)
-        self.horizontal_box[2].addLayout(sublayout)
+        self.horizontal_box[3].addLayout(sublayout)
         
         self.horizontal_box.append(QHBoxLayout())
         sublayout = QGridLayout()
         sublayout.addWidget(self.Back, 0, 0, Qt.AlignLeft)
         sublayout.addWidget(self.Schritt, 0, 1, Qt.AlignCenter)
         sublayout.addWidget(self.Next, 0, 2, Qt.AlignRight)
-        self.horizontal_box[3].addLayout(sublayout)
+        self.horizontal_box[4].addLayout(sublayout)
 
         
         self.vertical_box = QVBoxLayout()

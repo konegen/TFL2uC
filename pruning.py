@@ -8,6 +8,8 @@ from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow as tf
 import os
 
+from GUI._Helper import ThresholdCallback
+
 
 def get_layer_shape_dense(new_model_param,layer):	
     """	
@@ -644,7 +646,7 @@ def pruning(keras_model, x_train, y_train,comp,fit, prun_factor_dense=10, prun_f
     return pruned_model
 
 
-def pruning_for_acc(keras_model, x_train, y_train, x_test, y_test, comp, pruning_acc=None, max_acc_loss=1):
+def pruning_for_acc(keras_model, x_train, x_val_y_train, comp, pruning_acc=None, max_acc_loss=5, num_classes=None, label_one_hot=None, data_loader_path=None):
     """
     A given keras model gets pruned. Either an accuracy value (in %) can be specified, which 
     the minimized model must still achieve. Or the maximum loss of accuracy (in %) that 
@@ -652,46 +654,144 @@ def pruning_for_acc(keras_model, x_train, y_train, x_test, y_test, comp, pruning
     accuracy value is underrun or the accuracy loss is exceeded.
     
     Args: 
-        keras_model: Model which should be pruned
-        x_train: Training data to retrain the model after pruning
-        y_train: Labels of training data to retrain the model after pruning
-        x_test: Test data for evaluation of the minimized model
-        y_test: Labels of test data for evaluation of the minimized model
-        pruning_acc: Integer which says which accuracy value (in %) should not be fall below. If pruning_acc is not defined, it is Baseline - 5%
-        max_acc_loss: Integer which says which accuracy loss (in %) should not be exceed 
+        keras_model:      Model which should be pruned
+        x_train:          Training data to retrain the model after pruning
+        x_val_y_train:    Labels of training data to retrain the model after pruning
+        pruning_acc:      Integer which says which accuracy value (in %) should not be fall below. 
+                          If pruning_acc is not defined, it is Baseline - 5%
+        max_acc_loss:     Integer which says which accuracy loss (in %) should not be exceed
+        num_classes:      Number of different classes of the model
+        label_one_hot:    Boolean value if labels are one hot encoded or not
+        data_loader_path: Boolean value if labels are one hot encoded or not 
         
     Return: 
-        pruned_model: New model after pruning and retraining
+        pruned_model:     New model after pruning
     """
 
+    pruning_factor = 5
+    last_pruning_step = None
+    all_pruning_factors = [5]
+    lowest_pruning_factor_not_working = 100
+    original_model_acc = None
+    req_acc = None
 
-    original_model = load_model(keras_model)
-    original_model.compile(**comp)
-    original_model_acc = original_model.evaluate(x_test,y_test)[-1]
-
+    if callable(getattr(keras_model, "predict", None)) :
+        original_model = keras_model
+    elif isinstance(keras_model, str) and ".h5" in keras_model:
+        original_model = load_model(keras_model)
+    else:
+        print("No model given to prune")
+        
+    if pruning_acc == None:
+        if os.path.isfile(data_loader_path):
+            original_model_acc = original_model.evaluate(x_train,x_val_y_train)[-1]
+        elif os.path.isdir(data_loader_path):
+            original_model_acc = original_model.evaluate_generator(x_val_y_train)[-1]
+        print(original_model_acc)
+        req_acc = original_model_acc-(max_acc_loss/100)
+    else:
+        req_acc = pruning_acc
+     
     
-    for i in range(5,100,5):
-        model = prune_model(original_model_acc, prun_factor_dense=i, prun_factor_conv=i, metric='L1', comp=None, num_classes=None, label_one_hot=None)
+    train_epochs = 10
+    early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+    threshold = ThresholdCallback(req_acc)
+    callbacks=[early_stopping, threshold]
+    
+    
+    
+    
+    while pruning_factor <= 95:
         
-        train_epochs = 10
-        callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+        print("Next pruning factors: " + str(pruning_factor))
+        
+        model = prune_model(original_model, prun_factor_dense=pruning_factor, prun_factor_conv=pruning_factor, metric='L1', comp=None, num_classes=num_classes, label_one_hot=label_one_hot)
+        
+        if os.path.isfile(data_loader_path):
+            history = model.fit(x=x_train, y=x_val_y_train, batch_size=64, validation_split=0.2, epochs=train_epochs, callbacks=callback)
+        elif os.path.isdir(data_loader_path):
+            history = model.fit_generator(x_train, steps_per_epoch=len(x_train),
+                validation_data=x_val_y_train, validation_steps=len(x_val_y_train), epochs=train_epochs, callbacks=callbacks)
+             
+        if history.history['val_accuracy'][-1] < req_acc:
+            if lowest_pruning_factor_not_working > pruning_factor:
+                lowest_pruning_factor_not_working = pruning_factor
 
-        model.fit(x=x_train, y=y_train, batch_size=64, validation_split=0.2, epochs=train_epochs, callbacks=[callback])
-        
-        if pruning_acc != None:
-            if model.evaluate(x_test,y_test)[-1] < pruning_acc:
-                print(i-5)
-                if i == 5:
-                    pruned_model = model
+            if pruning_factor == 5:
+                print("No pruning possible")
+                return model
+
+            if last_pruning_step == 2:
+                print("Pruningfactor dense and conv: " + str(pruning_factor-last_pruning_step))
                 return pruned_model
+            elif last_pruning_step == 5:
+                pruning_factor -= 3
+                last_pruning_step = 2
+            elif last_pruning_step == 10:
+                pruning_factor -= 5
+                last_pruning_step = 5
+            elif last_pruning_step == 15:
+                pruning_factor -= 5
+                last_pruning_step = 10
+
+        else:  
             pruned_model = model
             
-        else:
-            if model.evaluate(x_test,y_test)[-1] < (original_model_acc-(max_acc_loss/100)):
-                print(i-5)
+            if len(history.history['val_accuracy']) <= int(0.3*train_epochs):
+                pruning_factor += 15
+                last_pruning_step = 15
+            elif len(history.history['val_accuracy']) <= int(0.5*train_epochs):
+                pruning_factor += 10
+                last_pruning_step = 10
+            elif len(history.history['val_accuracy']) <= int(0.7*train_epochs):
+                pruning_factor += 5
+                last_pruning_step = 5
+            elif len(history.history['val_accuracy']) > int(0.7*train_epochs):
+                pruning_factor += 2
+                last_pruning_step = 2
+                
+                
+        if lowest_pruning_factor_not_working < pruning_factor:
+            if pruning_factor - lowest_pruning_factor_not_working <= 2:
+                print("Pruningfactor dense and conv: " + str(pruning_factor-last_pruning_step))
                 return pruned_model
-            pruned_model = model
-    
+            elif pruning_factor - lowest_pruning_factor_not_working <= 5:
+                pruning_factor = lowest_pruning_factor_not_working - 3
+                last_pruning_step = 2
+            elif pruning_factor - lowest_pruning_factor_not_working <= 10:
+                pruning_factor = lowest_pruning_factor_not_working - 5
+                last_pruning_step = 5
+            elif pruning_factor - lowest_pruning_factor_not_working <= 15:
+                pruning_factor = lowest_pruning_factor_not_working - 5
+                last_pruning_step = 10
+
+        if all_pruning_factors.count(pruning_factor) >= 1:
+            if history.history['val_accuracy'][-1] < req_acc:
+                if last_pruning_step == 2 or last_pruning_step == 5:
+                    pruning_factor += 2
+                    last_pruning_step = 2
+                elif last_pruning_step == 10:
+                    pruning_factor += 5
+                    last_pruning_step = 5
+                elif last_pruning_step == 15:
+                    pruning_factor += 10
+                    last_pruning_step = 10
+            else:
+                if last_pruning_step == 2 or last_pruning_step == 5:
+                    pruning_factor -= 3
+                    last_pruning_step = 2
+                elif last_pruning_step == 10:
+                    pruning_factor -= 5
+                    last_pruning_step = 5
+                elif last_pruning_step == 15:
+                    pruning_factor -= 10
+                    last_pruning_step = 10
+                
+        all_pruning_factors.append(pruning_factor)
+        print("all_pruning_factors: " + str(all_pruning_factors))
+        print("lowest_pruning_factor_not_working: " + str(lowest_pruning_factor_not_working))
+        
+        
     return pruned_model
     
     
@@ -702,12 +802,16 @@ def prune_model(keras_model, prun_factor_dense=10, prun_factor_conv=10, metric='
     retrained.
     
     Args: 
-        keras_model: Model which should be pruned
+        keras_model:       Model which should be pruned
         prun_factor_dense: Integer which says how many percent of the neurons should be deleted
-        prun_factor_conv: Integer which says how many percent of the filters should be deleted
+        prun_factor_conv:  Integer which says how many percent of the filters should be deleted
+        metric:            Metric which should be used to prune the model
+        comp:              Dictionary with compiler settings
+        num_classes:       Number of different classes of the model
+        label_one_hot:     Boolean value if labels are one hot encoded or not 
         
     Return: 
-        pruned_model: New model after pruning 
+        pruned_model:      New model after pruning 
     """
     
     if callable(getattr(keras_model, "predict", None)) :

@@ -41,6 +41,7 @@ class MainWindow(QMainWindow):
         get_data_loader,
         set_pruning,
         set_quantization,
+        set_prun_type,
         set_quant_dtype,
         get_optimization,
         model_pruning,
@@ -69,6 +70,7 @@ class MainWindow(QMainWindow):
         self.data_loader_path = None
         self.optimizations = []
 
+        self.prun_type = None
         self.prun_factor_dense = None
         self.prun_factor_conv = None
         self.quant_dtype = None
