@@ -4,6 +4,7 @@ import matplotlib.image as mpimg
 import numpy as np
 import random
 import cv2
+from numpy.lib.stride_tricks import as_strided
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import csv
@@ -80,15 +81,26 @@ def set_pruning(self, CurWindow):
         if not "Pruning" in self.optimizations:
             self.optimizations.append("Pruning")
             print(self.optimizations)
+
+        CurWindow.prun_fac.setVisible(True)
+        CurWindow.prun_acc.setVisible(True)
+
         if self.prun_type != None:
             if "Factor" in self.prun_type:
                 CurWindow.prun_fac.setChecked(True)
                 CurWindow.prun_acc.setChecked(False)
+
+                CurWindow.Pruning_Dense.setVisible(True)
+                CurWindow.Pruning_Conv.setVisible(True)
+                CurWindow.Pruning_Conv_label.setVisible(True)
+                CurWindow.Pruning_Dense_label.setVisible(True)
             elif "Accuracy" in self.prun_type:
                 CurWindow.prun_fac.setChecked(False)
                 CurWindow.prun_acc.setChecked(True)
-        CurWindow.prun_fac.setVisible(True)
-        CurWindow.prun_acc.setVisible(True)
+
+                CurWindow.min_acc.setVisible(True)
+                CurWindow.acc_loss.setVisible(True)    
+
 
         # CurWindow.Quantization.setIconSize(QSize(100, 100))
         # CurWindow.Quantization.setGeometry(540, 85, 120, 120)
@@ -100,7 +112,17 @@ def set_pruning(self, CurWindow):
         CurWindow.prun_fac.setChecked(False)
         CurWindow.prun_acc.setChecked(False)
         CurWindow.prun_fac.setVisible(False)
-        CurWindow.prun_acc.setVisible(False)    
+        CurWindow.prun_acc.setVisible(False) 
+        
+        CurWindow.Pruning_Dense.setVisible(False)
+        CurWindow.Pruning_Conv.setVisible(False)
+        CurWindow.Pruning_Conv_label.setVisible(False)
+        CurWindow.Pruning_Dense_label.setVisible(False)
+
+        CurWindow.min_acc.setVisible(False)
+        CurWindow.acc_loss.setVisible(False)   
+        CurWindow.prun_acc_label.setVisible(False)
+        CurWindow.prun_acc_edit.setVisible(False) 
 
         # CurWindow.Pruning.setIconSize(QSize(150, 150))
         # CurWindow.Pruning.setGeometry(120, 85, 170, 170)
@@ -183,6 +205,8 @@ def set_prun_type(self, prun_type, CurWindow):
             
             CurWindow.min_acc.setVisible(False)
             CurWindow.acc_loss.setVisible(False)
+            CurWindow.prun_acc_label.setVisible(False)
+            CurWindow.prun_acc_edit.setVisible(False)
 
     elif "Accuracy" in prun_type:
         CurWindow.prun_fac.setChecked(False)
@@ -196,6 +220,13 @@ def set_prun_type(self, prun_type, CurWindow):
             
             CurWindow.min_acc.setVisible(True)
             CurWindow.acc_loss.setVisible(True)
+
+            if self.prun_acc_type != None and "Minimal accuracy" in self.prun_acc_type:
+                CurWindow.min_acc.setChecked(True)
+                CurWindow.acc_loss.setChecked(False)
+            elif self.prun_acc_type != None and  "Accuracy loss" in self.prun_acc_type:
+                CurWindow.min_acc.setChecked(False)
+                CurWindow.acc_loss.setChecked(True)
 
             try:
                 self.prun_factor_dense = int(CurWindow.Pruning_Dense.text())
@@ -211,6 +242,39 @@ def set_prun_type(self, prun_type, CurWindow):
 
     print(self.prun_type)
 
+def set_prun_acc_type(self, prun_type, CurWindow):
+    """Sets the pruning for accuracy type.
+
+    Sets and unsets the checked pruning for accuracy type.
+
+    Args:
+        prun_acc_type: Defines the pruning for accuracy type.
+        CurWindow:     GUI window from which the function is executed.
+    """
+    if "Minimal accuracy" in prun_type:
+        CurWindow.acc_loss.setChecked(False)
+        if CurWindow.min_acc.isChecked() == False:
+            self.prun_acc_type = None  
+            CurWindow.prun_acc_label.setVisible(False)
+            CurWindow.prun_acc_edit.setVisible(False)          
+        else:
+            self.prun_acc_type = prun_type
+            CurWindow.prun_acc_label.setVisible(True)
+            CurWindow.prun_acc_label.setText("HALLO")
+            CurWindow.prun_acc_edit.setVisible(True)
+    elif "Accuracy loss" in prun_type:
+        CurWindow.min_acc.setChecked(False)
+        if CurWindow.acc_loss.isChecked() == False:
+            self.prun_acc_type = None
+            CurWindow.prun_acc_label.setVisible(False)
+            CurWindow.prun_acc_edit.setVisible(False)
+        else:
+            self.prun_acc_type = prun_type
+            CurWindow.prun_acc_label.setVisible(True)
+            CurWindow.prun_acc_label.setText("MOIN")
+            CurWindow.prun_acc_edit.setVisible(True)
+    print(self.prun_acc_type)
+        
 def set_quant_dtype(self, dtype, CurWindow):
     """Sets the quantization type.
 
@@ -605,6 +669,15 @@ def get_separator(self, CurWindow):
 
 
 class ThresholdCallback(tf.keras.callbacks.Callback):
+    """Custom callback for model training.
+
+    This is a custom callback function. You can define an accuracy threshold
+    value when the model training should be stopped.
+
+    Attributes:
+        threshold: Accuracy value to stop training.
+    """
+
     def __init__(self, threshold):
         super(ThresholdCallback, self).__init__()
         self.threshold = threshold

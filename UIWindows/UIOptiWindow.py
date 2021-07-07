@@ -54,7 +54,7 @@ class UIOptiWindow(QWidget):
         self.Pruning.setIcon(QIcon(os.path.join('Images', 'Pruning_Button.png')))
         self.Pruning.setIconSize(QSize(260, 260))
         self.Pruning.setCheckable(True)
-        self.Pruning.setGeometry(80, 110, 280, 280)
+        self.Pruning.setGeometry(80, 80, 280, 280)
         self.Pruning.setToolTip('Optimize the network through pruning. This\n'
                                 'involves reducing the size of the network\n'
                                 'by removing neurons from the fully connected\n'
@@ -77,7 +77,7 @@ class UIOptiWindow(QWidget):
         self.Quantization.setIcon(QIcon(os.path.join('Images', 'Quantization_Button.png')))
         self.Quantization.setIconSize(QSize(260, 260))
         self.Quantization.setCheckable(True)
-        self.Quantization.setGeometry(440, 110, 280, 280)
+        self.Quantization.setGeometry(440, 80, 280, 280)
         self.Quantization.setToolTip('Optimize the network through quantization.\n'
                                      'This reduces the number of bits required\n'
                                      'to represent the value of the weights.\n'
@@ -100,9 +100,7 @@ class UIOptiWindow(QWidget):
         self.prun_fac.setFixedHeight(30)
         self.prun_fac.setCheckable(True)
         self.prun_fac.setVisible(False)
-        self.prun_fac.setToolTip('This quantization approach converts all weights\n'
-                                     'to int8 values. But the input and output\n'
-                                     'still remain 32-bit float.')
+        self.prun_fac.setToolTip('...\n')
         self.prun_fac.setStyleSheet("""QPushButton {
                            font: 9pt """ + FONT_STYLE + """}
                            QToolTip { 
@@ -120,9 +118,7 @@ class UIOptiWindow(QWidget):
         self.prun_acc.setFixedHeight(30)
         self.prun_acc.setCheckable(True)
         self.prun_acc.setVisible(False)
-        self.prun_acc.setToolTip('This quantization approach converts all weights\n'
-                                     'to int8 values. But the input and output\n'
-                                     'still remain 32-bit float.')
+        self.prun_acc.setToolTip('...\n')
         self.prun_acc.setStyleSheet("""QPushButton {
                            font: 9pt """ + FONT_STYLE + """}
                            QToolTip { 
@@ -135,14 +131,14 @@ class UIOptiWindow(QWidget):
                            background-color : rgb(10, 100, 200);
                            }""")
 
-        self.Pruning_Dense_label = QLabel("Pruningfactor\nDense layer", self)
+        self.Pruning_Dense_label = QLabel("Dense layer\nfactor in %", self)
         self.Pruning_Dense_label.setStyleSheet("font: 9pt " + FONT_STYLE)
         self.Pruning_Dense_label.setFixedWidth(90)
         self.Pruning_Dense_label.setFixedHeight(40)
         self.Pruning_Dense_label.setAlignment(Qt.AlignCenter)
         self.Pruning_Dense_label.setVisible(False)
         
-        self.Pruning_Conv_label = QLabel("Pruningfactor\nConv layer", self)
+        self.Pruning_Conv_label = QLabel("Conv layer\nfactor in %", self)
         self.Pruning_Conv_label.setStyleSheet("font: 9pt " + FONT_STYLE)
         self.Pruning_Conv_label.setFixedWidth(90)
         self.Pruning_Conv_label.setFixedHeight(40)
@@ -174,6 +170,20 @@ class UIOptiWindow(QWidget):
         self.acc_loss.setFixedWidth(90)
         self.acc_loss.setFixedHeight(40)
         self.acc_loss.setVisible(False)
+        
+        self.prun_acc_label = QLabel(self)
+        self.prun_acc_label.setStyleSheet("font: 9pt " + FONT_STYLE)
+        self.prun_acc_label.setFixedWidth(90)
+        self.prun_acc_label.setFixedHeight(40)
+        self.prun_acc_label.setAlignment(Qt.AlignCenter)
+        self.prun_acc_label.setVisible(False)
+
+        self.prun_acc_edit = QLineEdit(self)
+        self.prun_acc_edit.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.prun_acc_edit.setFixedWidth(90)
+        self.prun_acc_edit.setFixedHeight(30)
+        self.prun_acc_edit.setAlignment(Qt.AlignCenter)
+        self.prun_acc_edit.setVisible(False)
 
         self.quant_int = QPushButton("int8+float32", self)
         self.quant_int.setFixedWidth(90)
@@ -250,8 +260,10 @@ class UIOptiWindow(QWidget):
         sublayout.addWidget(self.Abstand_label, 1, 5, Qt.AlignCenter)
         sublayout.addWidget(self.Button_Platzhalter, 1, 6, Qt.AlignCenter)
         sublayout.addWidget(self.Pruning_Dense, 2, 0, Qt.AlignCenter)
+        sublayout.addWidget(self.prun_acc_label, 2, 0, Qt.AlignCenter)
         sublayout.addWidget(self.Abstand_label, 2, 1, Qt.AlignCenter)
         sublayout.addWidget(self.Pruning_Conv, 2, 2, Qt.AlignCenter)
+        sublayout.addWidget(self.prun_acc_edit, 2, 2, Qt.AlignCenter)
         sublayout.addWidget(self.Abstand, 2, 3, Qt.AlignCenter)
         sublayout.addWidget(self.Button_Platzhalter, 2, 4, Qt.AlignCenter)
         sublayout.addWidget(self.Abstand_label, 2, 5, Qt.AlignCenter)

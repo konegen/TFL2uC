@@ -42,6 +42,7 @@ class MainWindow(QMainWindow):
         set_pruning,
         set_quantization,
         set_prun_type,
+        set_prun_acc_type,
         set_quant_dtype,
         get_optimization,
         model_pruning,
@@ -73,6 +74,7 @@ class MainWindow(QMainWindow):
         self.prun_type = None
         self.prun_factor_dense = None
         self.prun_factor_conv = None
+        self.prun_acc_type = None
         self.quant_dtype = None
         
         self.separator = None

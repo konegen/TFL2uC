@@ -50,24 +50,19 @@ def OptiWindow(self, n, LastWindow):
     if "Pruning" in self.optimizations:
         self.Window2.Pruning.setChecked(True)
         self.set_pruning(self.Window2)
-        self.Window2.Pruning_Dense.setText(str(self.prun_factor_dense))
-        self.Window2.Pruning_Conv.setText(str(self.prun_factor_conv))
+        self.set_prun_type(self.prun_type, self.Window2)
     if "Quantization" in self.optimizations:
         self.Window2.Quantization.setChecked(True)
         self.set_quantization(self.Window2)
-        if self.quant_dtype != None:
-            if "int8 with float fallback" in self.quant_dtype:
-                self.Window2.quant_int_only.setChecked(False)  
-                self.Window2.quant_int.setChecked(True)              
-            elif "int8 only" in self.quant_dtype:
-                self.Window2.quant_int_only.setChecked(True)  
-                self.Window2.quant_int.setChecked(False) 
 
     self.Window2.Pruning.toggled.connect(lambda:self.set_pruning(self.Window2))
     self.Window2.Quantization.toggled.connect(lambda:self.set_quantization(self.Window2))
     
     self.Window2.prun_fac.clicked.connect(lambda:self.set_prun_type("Factor", self.Window2))
     self.Window2.prun_acc.clicked.connect(lambda:self.set_prun_type("Accuracy", self.Window2))
+    
+    self.Window2.min_acc.clicked.connect(lambda:self.set_prun_acc_type("Minimal accuracy", self.Window2))
+    self.Window2.acc_loss.clicked.connect(lambda:self.set_prun_acc_type("Accuracy loss", self.Window2))
     
     self.Window2.quant_int.clicked.connect(lambda:self.set_quant_dtype("int8 with float fallback", self.Window2))
     self.Window2.quant_int_only.clicked.connect(lambda:self.set_quant_dtype("int8 only", self.Window2))

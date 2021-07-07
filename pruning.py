@@ -708,7 +708,7 @@ def pruning_for_acc(keras_model, x_train, x_val_y_train, comp, pruning_acc=None,
         model = prune_model(original_model, prun_factor_dense=pruning_factor, prun_factor_conv=pruning_factor, metric='L1', comp=None, num_classes=num_classes, label_one_hot=label_one_hot)
         
         if os.path.isfile(data_loader_path):
-            history = model.fit(x=x_train, y=x_val_y_train, batch_size=64, validation_split=0.2, epochs=train_epochs, callbacks=callback)
+            history = model.fit(x=x_train, y=x_val_y_train, batch_size=64, validation_split=0.2, epochs=train_epochs, callbacks=callbacks)
         elif os.path.isdir(data_loader_path):
             history = model.fit_generator(x_train, steps_per_epoch=len(x_train),
                 validation_data=x_val_y_train, validation_steps=len(x_val_y_train), epochs=train_epochs, callbacks=callbacks)
