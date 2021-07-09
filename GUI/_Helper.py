@@ -349,8 +349,19 @@ def model_pruning(self, CurWindow):
     Args:
         CurWindow: GUI window from which the function is executed.
     """
+    CurWindow.summary.setVisible(False)
+    CurWindow.project_name_label.setVisible(False)
+    CurWindow.output_path_label.setVisible(False)
+    CurWindow.model_path_label.setVisible(False)
+    CurWindow.optimizations_label.setVisible(False)
+    CurWindow.pruning_label.setVisible(False)
+    CurWindow.quantization_label.setVisible(False)
+    CurWindow.data_loader_label.setVisible(False)
+
     CurWindow.Back.setVisible(False)
     CurWindow.Load.setVisible(False)
+
+    CurWindow.Loadpng.setVisible(True)
 
     CurWindow.loading_images.start()
     CurWindow.prune_model.start()
