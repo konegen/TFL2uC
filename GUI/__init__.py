@@ -75,9 +75,10 @@ class MainWindow(QMainWindow):
         self.prun_factor_dense = None
         self.prun_factor_conv = None
         self.prun_acc_type = None
+        self.prun_acc = None
         self.quant_dtype = None
         
         self.separator = None
         self.csv_target_label = None
 
-        self.StartWindow(None)
+        self.StartWindow(None,None)

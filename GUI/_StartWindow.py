@@ -10,7 +10,7 @@ from PyQt5.QtCore import *
 
 from UIWindows.UIStartWindow import *
 
-def StartWindow(self, n):
+def StartWindow(self, n, LastWindow):
     """Activates the GUI window to select output path, project name
        and model path.
 
@@ -30,6 +30,17 @@ def StartWindow(self, n):
         self.Window1.project_name.setText(self.project_name)
         self.Window1.output_path.setText(self.output_path)
         self.Window1.model_path.setText(self.model_path)
+
+        try:
+            if "Factor" in self.prun_acc_type:
+                self.prun_factor_dense = int(LastWindow.Pruning_Dense.text())
+                self.prun_factor_conv = int(LastWindow.Pruning_Conv.text())
+            elif "Accuracy" in self.prun_acc_type:
+                self.prun_acc = int(LastWindow.prun_acc_edit.text())
+        except:
+            self.prun_acc = ""
+            self.prun_factor_dense = ""
+            self.prun_factor_conv = ""
 
 
     self.Window1.output_path_Browse.clicked.connect(lambda:self.get_output_path(self.Window1))

@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from pruning import prune_model
+from pruning import prune_model, pruning_for_acc
 from GUI._Helper import dataloader_pruning
 
 
@@ -15,24 +15,30 @@ class Prune_model(QThread):
     """Thread to prune and retrain the model.
 
     Attributes:
-        data_loader_path:  Path of the folder or file with the training data
         model_path:        Path of the model to convert
+        data_loader_path:  Path of the folder or file with the training data
+        optimizations:     Selected optimization algorithms
+        prun_type:         Type of pruning
         prun_factor_dense: Pruning factor for fully connected layers
         prun_factor_conv:  Pruning factor for convolution layers
-        optimizations:     Selected optimization algorithms
+        prun_acc_type:     Type of pruning to accuracy
+        prun_acc:          Accuracy to prune to
         separator:         Separator for reading a CSV file
         csv_target_label:  Target label from the CSV file
     """
     
     request_signal = pyqtSignal()
     
-    def __init__(self, data_loader_path, model_path, prun_factor_dense, prun_factor_conv, optimizations, separator, csv_target_label):
+    def __init__(self, model_path, data_loader_path, optimizations, prun_type, prun_factor_dense, prun_factor_conv, prun_acc_type, prun_acc, separator, csv_target_label):
         QThread.__init__(self)
-        self.data_loader_path = data_loader_path
         self.model_path = model_path
+        self.data_loader_path = data_loader_path
+        self.optimizations = optimizations
+        self.prun_type = prun_type
         self.prun_factor_dense = prun_factor_dense
         self.prun_factor_conv = prun_factor_conv
-        self.optimizations = optimizations
+        self.prun_acc_type = prun_acc_type
+        self.prun_acc = prun_acc
         self.separator = separator
         self.csv_target_label = csv_target_label
         
@@ -56,10 +62,37 @@ class Prune_model(QThread):
             else:
                 x_train, x_val_y_train, label_one_hot = dataloader_pruning(self.data_loader_path, self.separator, self.csv_target_label, model.input.shape[1], model.input.shape[2], model.input.shape[3], num_classes)
 
-            pruned_model = prune_model(self.model_path, self.prun_factor_dense, self.prun_factor_conv, metric='L1',comp=None, num_classes=num_classes, label_one_hot=label_one_hot)
-            
-            train_epochs = 10
-            callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+            #The compiler could also get included to the GUI
+            if num_classes <= 2:
+                comp = {
+                "optimizer": 'adam',
+                "loss": tf.keras.losses.BinaryCrossentropy(),
+                "metrics": 'accuracy'}    
+            else:
+                if label_one_hot == True:
+                    comp = {
+                    "optimizer": 'adam',
+                    "loss": tf.keras.losses.CategoricalCrossentropy(),
+                    "metrics": 'accuracy'}  
+                else:
+                    comp = {
+                    "optimizer": 'adam',
+                    "loss": tf.keras.losses.SparseCategoricalCrossentropy(),
+                    "metrics": 'accuracy'}
+
+            if "Factor" in self.prun_type:
+                pruned_model = prune_model(model, self.prun_factor_dense, self.prun_factor_conv, metric='L1',comp=comp, num_classes=num_classes, label_one_hot=label_one_hot)
+            else:
+                if "Minimal accuracy" in self.prun_acc_type:
+                    pruned_model = pruning_for_acc(model, x_train, x_val_y_train, comp=comp, pruning_acc=self.prun_acc, max_acc_loss=None, num_classes=num_classes, label_one_hot=label_one_hot, data_loader_path=self.data_loader_path)
+                else:
+                    pruned_model = pruning_for_acc(model, x_train, x_val_y_train, comp=comp, pruning_acc=None, max_acc_loss=self.prun_acc, num_classes=num_classes, label_one_hot=label_one_hot, data_loader_path=self.data_loader_path)
+
+
+            train_epochs = 20
+            callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
+
+            pruned_model.summary()
 
             # fit model
             if os.path.isfile(self.data_loader_path):

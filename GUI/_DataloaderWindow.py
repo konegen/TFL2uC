@@ -39,11 +39,12 @@ def DataloaderWindow(self, n, LastWindow):
             
             elif "Factor" in self.prun_type:
                 try:
-                    if int(LastWindow.Pruning_Dense.text()) < 5 or int(LastWindow.Pruning_Dense.text()) > 95  or int(LastWindow.Pruning_Conv.text()) < 5  or int(LastWindow.Pruning_Conv.text()) > 95:
+                    # if int(LastWindow.Pruning_Dense.text()) < 5 or int(LastWindow.Pruning_Dense.text()) > 95  or int(LastWindow.Pruning_Conv.text()) < 5  or int(LastWindow.Pruning_Conv.text()) > 95:
+                    if int(LastWindow.Pruning_Dense.text()) > 95  or int(LastWindow.Pruning_Conv.text()) > 95:
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Warning)
                         
-                        msg.setText("Enter prunefactors between 5 and 95")
+                        msg.setText("Enter prunefactors less than 95")
                         msg.setWindowTitle("Warning")
                         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
                         msg.exec_()
@@ -72,9 +73,29 @@ def DataloaderWindow(self, n, LastWindow):
                         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
                         msg.exec_()
                         return
+
+                    if "Minimal accuracy" in self.prun_acc_type:
+                        if int(LastWindow.prun_acc_edit.text()) < 50 or int(LastWindow.prun_acc_edit.text()) > 99:
+                            msg = QMessageBox()
+                            msg.setIcon(QMessageBox.Warning)
+                            
+                            msg.setText("Enter a value for minimal Accuracy between 50 and 99")
+                            msg.setWindowTitle("Warning")
+                            msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                            msg.exec_()
+                            return
+                    else:
+                        if int(LastWindow.prun_acc_edit.text()) < 1 or int(LastWindow.prun_acc_edit.text()) > 20:
+                            msg = QMessageBox()
+                            msg.setIcon(QMessageBox.Warning)
+                            
+                            msg.setText("Enter a value for maximal accuracy loss between 1 and 20")
+                            msg.setWindowTitle("Warning")
+                            msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                            msg.exec_()
+                            return
                     
-                    self.prun_factor_dense = int(LastWindow.Pruning_Dense.text())
-                    self.prun_factor_conv = int(LastWindow.Pruning_Conv.text())
+                    self.prun_acc = int(LastWindow.prun_acc_edit.text())
                 except:
                     msg = QMessageBox()
                     msg.setIcon(QMessageBox.Warning)
@@ -95,8 +116,11 @@ def DataloaderWindow(self, n, LastWindow):
             msg.exec_()
             return
 
+
     self.Window3 = UIDataloaderWindow(self.FONT_STYLE, self)
 
+    if self.data_loader_path != None:
+        self.Window3.Daten_Pfad.setText(self.data_loader_path)
 
     self.Window3.Daten_einlesen_Browse.clicked.connect(lambda: self.get_data_loader(self.Window3))
 

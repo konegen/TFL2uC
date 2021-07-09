@@ -13,7 +13,12 @@ from Threads.Prune_model_thread import *
 
 
 class UILoadWindow(QWidget):
-    def __init__(self, FONT_STYLE, model_path, project_name, output_path, data_loader_path, prun_factor_dense, prun_factor_conv, optimizations, quant_dtype, separator, csv_target_label, parent=None):
+    """Builds the project. 
+
+    If selected the model get optimized. After that it gets converted
+    and all necessary files get created.
+    """
+    def __init__(self, FONT_STYLE, model_path, project_name, output_path, data_loader_path, optimizations, prun_type, prun_factor_dense, prun_factor_conv, prun_acc_type, prun_acc, quant_dtype, separator, csv_target_label, parent=None):
         super(UILoadWindow, self).__init__(parent)
         
         self.FONT_STYLE = FONT_STYLE 
@@ -21,9 +26,12 @@ class UILoadWindow(QWidget):
         self.project_name = project_name
         self.output_path = output_path
         self.data_loader_path = data_loader_path
+        self.optimizations = optimizations
+        self.prun_type = prun_type
         self.prun_factor_dense = prun_factor_dense
         self.prun_factor_conv = prun_factor_conv
-        self.optimizations = optimizations
+        self.prun_acc_type = prun_acc_type
+        self.prun_acc = prun_acc
         self.quant_dtype = quant_dtype
         self.separator = separator
         self.csv_target_label = csv_target_label
@@ -39,16 +47,6 @@ class UILoadWindow(QWidget):
         self.Loadpng = QLabel(self)
         img = QPixmap(os.path.join('Images','GUI_loading_images', 'GUI_load_0.png'))
         self.Loadpng.setPixmap(img)
-        
-        self.model_memory_label = QLabel("Model memory:")
-        self.model_memory_label.setStyleSheet("font: 12pt " + FONT_STYLE)
-        self.model_memory_label.setAlignment(Qt.AlignCenter)
-        
-        self.model_memory = QLineEdit(self)
-        self.model_memory.setStyleSheet("font: 12pt " + FONT_STYLE)
-        self.model_memory.setFixedWidth(90)
-        self.model_memory.setFixedHeight(30)
-        self.model_memory.setAlignment(Qt.AlignCenter)
         
         self.Schritt = QLabel(self)
         Schritt_img = QPixmap(os.path.join('Images', 'GUI_progress_bar_Demonstrator', 'GUI_demonstrator_step_4.png'))
@@ -91,10 +89,8 @@ class UILoadWindow(QWidget):
         self.horizontal_box[1].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
-        # self.horizontal_box[2].addWidget(self.Finish)
         self.horizontal_box[2].addStretch()
-        self.horizontal_box[2].addWidget(self.model_memory_label)
-        self.horizontal_box[2].addWidget(self.model_memory)
+        self.horizontal_box[2].addWidget(self.Finish)
         self.horizontal_box[2].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
@@ -114,7 +110,7 @@ class UILoadWindow(QWidget):
         
         self.loading_images = Loading_images(self.Loadpng)
         
-        self.prune_model = Prune_model(self.data_loader_path, self.model_path, self.prun_factor_dense, self.prun_factor_conv, self.optimizations, self.separator, self.csv_target_label)
+        self.prune_model = Prune_model(self.model_path, self.data_loader_path, self.optimizations, self.prun_type, self.prun_factor_dense, self.prun_factor_conv, self.prun_acc_type, self.prun_acc, self.separator, self.csv_target_label)
 
         
         if 'Pruning' in optimizations:

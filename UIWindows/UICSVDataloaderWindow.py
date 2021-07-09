@@ -99,6 +99,7 @@ class UICSVDataloaderWindow(QWidget):
         self.cb_label_col = QComboBox()
         self.cb_label_col.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.cb_label_col.setFixedWidth(200)
+        self.cb_label_col.addItems(["First", "Last"])
         self.cb_label_col.setVisible(False)
 
         self.cbSemicolon = QCheckBox('Semicolon', self)

@@ -41,7 +41,7 @@ def LoadWindow(self, LastWindow):
              
 
     
-    self.Window4 = UILoadWindow(self.FONT_STYLE, self.model_path, self.project_name, self.output_path, self.data_loader_path, self.prun_factor_dense, self.prun_factor_conv, self.optimizations, self.quant_dtype, self.separator, self.csv_target_label, self)
+    self.Window4 = UILoadWindow(self.FONT_STYLE, self.model_path, self.project_name, self.output_path, self.data_loader_path, self.optimizations, self.prun_type, self.prun_factor_dense, self.prun_factor_conv, self.prun_acc_type, self.prun_acc, self.quant_dtype, self.separator, self.csv_target_label, self)
     
     self.Window4.Back.clicked.connect(lambda:nextWindow(self, self.optimizations))
     
