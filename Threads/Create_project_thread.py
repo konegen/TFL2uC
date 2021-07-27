@@ -37,13 +37,13 @@ class Convert_Build(QThread):
         self.separator = separator
         self.csv_target_label = csv_target_label
 
-    def run(self):
+    def run(self, model_memory):
         """Activates the thread
 
         Calls the function to convert the model and build the project.
         When the function is finished, a signal is emitted.
         """
-        convert_and_write(self.model_path, self.project_name, self.output_path, self.optimizations, self.data_loader_path, self.quant_dtype, self.separator, self.csv_target_label)
+        convert_and_write(self.model_path, self.project_name, self.output_path, self.optimizations, self.data_loader_path, self.quant_dtype, self.separator, self.csv_target_label, model_memory)
         self.request_signal.emit()
         
     def stop_thread(self):

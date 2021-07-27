@@ -14,6 +14,7 @@ import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from tensorflow.python.framework.tensor_shape import as_dimension
 
 def get_output_path(self, CurWindow):
     """Get the path where the genareted Project should be stored
@@ -349,6 +350,28 @@ def model_pruning(self, CurWindow):
     Args:
         CurWindow: GUI window from which the function is executed.
     """
+    try:
+        if int(CurWindow.model_memory.text()) < 5 or int(CurWindow.model_memory.text()) > 1000:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+                
+            msg.setText("Please enter number for the model memory between 5 and 100 kB.")
+            msg.setWindowTitle("Warning")
+            msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            msg.exec_()
+            return
+        else:
+            self.model_memory = int(CurWindow.model_memory.text())
+    except:
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+            
+        msg.setText("Please enter a valid number for the model memory.")
+        msg.setWindowTitle("Warning")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg.exec_()
+        return
+
     CurWindow.summary.setVisible(False)
     CurWindow.project_name_label.setVisible(False)
     CurWindow.output_path_label.setVisible(False)
@@ -357,6 +380,8 @@ def model_pruning(self, CurWindow):
     CurWindow.pruning_label.setVisible(False)
     CurWindow.quantization_label.setVisible(False)
     CurWindow.data_loader_label.setVisible(False)
+    CurWindow.model_memory_label.setVisible(False)
+    CurWindow.model_memory.setVisible(False)
 
     CurWindow.Back.setVisible(False)
     CurWindow.Load.setVisible(False)
@@ -378,7 +403,7 @@ def download(self, CurWindow):
     try:
         CurWindow.prune_model.stop_thread()
         print("To uC start")
-        CurWindow.conv_build_load.start()
+        CurWindow.conv_build_load.run(self.model_memory)
     except:
         print("Error")
 
@@ -427,17 +452,13 @@ def dataloader_quantization(data_loader_path, image_height, image_width, separat
 
     if os.path.isfile(data_loader_path):
         if ".csv" in data_loader_path:
-            # Hier muss das extrahieren der Daten aus der CSV Datei implemntiert werden
-            df = pd.read_csv(data_loader_path, sep=separator, header=0)
+            df = pd.read_csv(data_loader_path, sep=separator, index_col=False)
 
-            features = df.loc[:, df.columns != csv_target_label]
+            if "First" in csv_target_label:
+                X = np.array(df.iloc[:,1:].values)[..., np.newaxis]
+            else:
+                X = np.array(df.iloc[:,:-1].values)[..., np.newaxis]
 
-            X_temp=[]
-            for row in features[features.columns[0]]:
-                res = row.strip('][').split(', ')
-                X_temp.append([float(x) for x in res])
-            X = np.asarray(X_temp, dtype=float)[..., np.newaxis]
-            
             return X
 
         else:
@@ -493,7 +514,6 @@ def dataloader_pruning(data_loader_path, separator, csv_target_label, image_heig
     """
     if os.path.isfile(data_loader_path):
         if ".csv" in data_loader_path:
-            # Hier muss das extrahieren der Daten aus der CSV Datei implemntiert werden
             df = pd.read_csv(data_loader_path, sep=separator, index_col=False)
 
             if "First" in csv_target_label:

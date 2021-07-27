@@ -32,7 +32,7 @@ def StartWindow(self, n, LastWindow):
         self.Window1.model_path.setText(self.model_path)
 
         try:
-            if "Factor" in self.prun_acc_type:
+            if "Factor" in self.prun_type:
                 self.prun_factor_dense = int(LastWindow.Pruning_Dense.text())
                 self.prun_factor_conv = int(LastWindow.Pruning_Conv.text())
             elif "Accuracy" in self.prun_acc_type:
@@ -41,6 +41,7 @@ def StartWindow(self, n, LastWindow):
             self.prun_acc = ""
             self.prun_factor_dense = ""
             self.prun_factor_conv = ""
+            print("ERROR")
 
 
     self.Window1.output_path_Browse.clicked.connect(lambda:self.get_output_path(self.Window1))

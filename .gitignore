@@ -1,4 +1,5 @@
 .gitignore.txt
+GUI_Ablauf.pptx
 __pycache__/
 image_classifier/
 image_regressor/

@@ -35,7 +35,7 @@ def create_project_dir(project_name, output_path, converted_model_dir, model_nam
     return project_dir
 
 
-def main_functions(project_dir, model_name, model_input_neurons, model_output_neurons, quant_dtype, model_input_shape, model_input_dim):
+def main_functions(project_dir, model_name, model_input_neurons, model_output_neurons, quant_dtype, model_memory):
     """
     The script which loads and executes the model is created
     
@@ -45,8 +45,8 @@ def main_functions(project_dir, model_name, model_input_neurons, model_output_ne
         model_input_neurons:  Number of neurons in the input layer of the model
         model_output_neurons: Number of neurons in the output layer of the model
         quant_dtype:          Data type to quantize to
-        model_input_shape:    Shape of the inputdata of the model
-        model_input_dim:      Number of dimensions of the inputdata
+        model_memory:         Preallocate a certain amount of memory for input, 
+                              output, and intermediate arrays in kilobytes
     """        
     with open(project_dir + "/src/TF_Lite_exe.cc", "w") as f:
             
@@ -54,7 +54,7 @@ def main_functions(project_dir, model_name, model_input_neurons, model_output_ne
                 '\n'
                 'namespace {\n'
                 '// Create an area of memory to use for input, output, and intermediate arrays.\n'
-                'constexpr int kTensorArenaSize = 170 * 1024;\n'
+                'constexpr int kTensorArenaSize = ' + str(model_memory) + ' * 1024;\n'
                 'uint8_t tensor_arena[kTensorArenaSize];\n'
                 '\n' 'tflite::ErrorReporter* error_reporter = nullptr;\n'
                 'const tflite::Model* model = nullptr;\n'

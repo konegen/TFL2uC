@@ -43,8 +43,8 @@ class UILoadWindow(QWidget):
         self.label.setStyleSheet("font: 12pt " + FONT_STYLE)
         self.label.setAlignment(Qt.AlignCenter)
         
-        self.Abstand = QLabel()
-        self.Abstand.setFixedHeight(30)
+        # self.Abstand = QLabel()
+        # self.Abstand.setFixedHeight(30)
         
         self.Loadpng = QLabel(self)
         img = QPixmap(os.path.join('Images','GUI_loading_images', 'GUI_load_0.png'))
@@ -125,6 +125,24 @@ class UILoadWindow(QWidget):
         else:
             self.data_loader_label.setVisible(False)
         
+        self.model_memory_label = QLabel("Model memory:\t")
+        self.model_memory_label.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.model_memory_label.setFixedWidth(150)
+        self.model_memory_label.setFixedHeight(30)
+        self.model_memory_label.setAlignment(Qt.AlignLeft)
+        
+        self.model_memory = QLineEdit(self)
+        self.model_memory.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.model_memory.setFixedWidth(60)
+        self.model_memory.setFixedHeight(30)
+        self.model_memory.setAlignment(Qt.AlignLeft)
+        
+        self.model_memory_label_kb = QLabel("kB")
+        self.model_memory_label_kb.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.model_memory_label_kb.setFixedWidth(30)
+        self.model_memory_label_kb.setFixedHeight(30)
+        self.model_memory_label_kb.setAlignment(Qt.AlignLeft)
+        
         self.Schritt = QLabel(self)
         Schritt_img = QPixmap(os.path.join('Images', 'GUI_progress_bar_Demonstrator', 'GUI_demonstrator_step_4.png'))
         self.Schritt.setPixmap(Schritt_img)
@@ -159,64 +177,76 @@ class UILoadWindow(QWidget):
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[0].addWidget(self.label)
         self.horizontal_box[0].setAlignment(Qt.AlignTop)
-        
+
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[1].addStretch()
-        self.horizontal_box[1].addWidget(self.Loadpng)
+        self.horizontal_box[1].addWidget(self.model_memory_label)
+        self.horizontal_box[1].addWidget(self.model_memory)
+        self.horizontal_box[1].addWidget(self.model_memory_label_kb)
         self.horizontal_box[1].addStretch()
+        self.horizontal_box[1].addStretch()
+        self.horizontal_box[1].addStretch()
+        self.horizontal_box[1].addStretch()
+        self.horizontal_box[1].addStretch()
+        self.horizontal_box[1].setAlignment(Qt.AlignTop)
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[2].addStretch()
-        self.horizontal_box[2].addWidget(self.summary)
+        self.horizontal_box[2].addWidget(self.Loadpng)
         self.horizontal_box[2].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[3].addStretch()
-        self.horizontal_box[3].addWidget(self.project_name_label)
+        self.horizontal_box[3].addWidget(self.summary)
         self.horizontal_box[3].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[4].addStretch()
-        self.horizontal_box[4].addWidget(self.output_path_label)
+        self.horizontal_box[4].addWidget(self.project_name_label)
         self.horizontal_box[4].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[5].addStretch()
-        self.horizontal_box[5].addWidget(self.model_path_label)
+        self.horizontal_box[5].addWidget(self.output_path_label)
         self.horizontal_box[5].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[6].addStretch()
-        self.horizontal_box[6].addWidget(self.optimizations_label)
+        self.horizontal_box[6].addWidget(self.model_path_label)
         self.horizontal_box[6].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[7].addStretch()
-        self.horizontal_box[7].addWidget(self.pruning_label)
+        self.horizontal_box[7].addWidget(self.optimizations_label)
         self.horizontal_box[7].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[8].addStretch()
-        self.horizontal_box[8].addWidget(self.quantization_label)
+        self.horizontal_box[8].addWidget(self.pruning_label)
         self.horizontal_box[8].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[9].addStretch()
-        self.horizontal_box[9].addWidget(self.data_loader_label)
+        self.horizontal_box[9].addWidget(self.quantization_label)
         self.horizontal_box[9].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
         self.horizontal_box[10].addStretch()
-        self.horizontal_box[10].addWidget(self.Finish)
+        self.horizontal_box[10].addWidget(self.data_loader_label)
         self.horizontal_box[10].addStretch()
         
         self.horizontal_box.append(QHBoxLayout())
-        self.horizontal_box[11].addWidget(self.Back)
         self.horizontal_box[11].addStretch()
-        self.horizontal_box[11].addWidget(self.Schritt) 
-        self.horizontal_box[11].addStretch()         
-        self.horizontal_box[11].addWidget(self.Load)
-        self.horizontal_box[11].setAlignment(Qt.AlignBottom)
+        self.horizontal_box[11].addWidget(self.Finish)
+        self.horizontal_box[11].addStretch()
+        
+        self.horizontal_box.append(QHBoxLayout())
+        self.horizontal_box[12].addWidget(self.Back)
+        self.horizontal_box[12].addStretch()
+        self.horizontal_box[12].addWidget(self.Schritt) 
+        self.horizontal_box[12].addStretch()         
+        self.horizontal_box[12].addWidget(self.Load)
+        self.horizontal_box[12].setAlignment(Qt.AlignBottom)
         
         
         self.vertical_box = QVBoxLayout()

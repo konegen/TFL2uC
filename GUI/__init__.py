@@ -81,4 +81,6 @@ class MainWindow(QMainWindow):
         self.separator = None
         self.csv_target_label = None
 
+        self.model_memory = None
+
         self.StartWindow(None,None)
