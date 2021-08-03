@@ -1,4 +1,3 @@
-import os
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 
@@ -7,7 +6,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 from Auto_TF_to_uC.create_project import *
-import subprocess as sub
 
 
 class Convert_Build(QThread):

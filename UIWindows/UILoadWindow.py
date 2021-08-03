@@ -1,7 +1,5 @@
 import os
 import sys
-
-from tensorflow.python.ops.ragged.ragged_tensor import _assert_sparse_indices_are_ragged_right
 sys.path.append("..") # Adds higher directory to python modules path.
 
 from PyQt5.QtWidgets import *
@@ -11,7 +9,6 @@ from PyQt5.QtCore import *
 from Threads.Loading_images_thread import * 
 from Threads.Create_project_thread import *
 from Threads.Prune_model_thread import *
-
 
 
 class UILoadWindow(QWidget):
@@ -50,6 +47,24 @@ class UILoadWindow(QWidget):
         img = QPixmap(os.path.join('Images','GUI_loading_images', 'GUI_load_0.png'))
         self.Loadpng.setPixmap(img)
         self.Loadpng.setVisible(False)
+        
+        self.model_memory_label = QLabel("Model memory:\t")
+        self.model_memory_label.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.model_memory_label.setFixedWidth(150)
+        self.model_memory_label.setFixedHeight(30)
+        self.model_memory_label.setAlignment(Qt.AlignLeft)
+        
+        self.model_memory = QLineEdit(self)
+        self.model_memory.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.model_memory.setFixedWidth(60)
+        self.model_memory.setFixedHeight(30)
+        self.model_memory.setAlignment(Qt.AlignLeft)
+        
+        self.model_memory_label_kb = QLabel("kB")
+        self.model_memory_label_kb.setStyleSheet("font: 12pt " + FONT_STYLE)
+        self.model_memory_label_kb.setFixedWidth(30)
+        self.model_memory_label_kb.setFixedHeight(30)
+        self.model_memory_label_kb.setAlignment(Qt.AlignLeft)
 
         self.summary = QLabel("Summary")
         self.summary.setStyleSheet("font: 12pt " + FONT_STYLE)
@@ -76,11 +91,11 @@ class UILoadWindow(QWidget):
         self.model_path_label.setAlignment(Qt.AlignLeft)
 
         if "Pruning" in self.optimizations and "Quantization" in self.optimizations:
-            self.optimizations_label = QLabel("Optimizations: \tPruning + Quantization")
+            self.optimizations_label = QLabel("Optimization: \tPruning + Quantization")
         elif len(self.optimizations) != 0:
-            self.optimizations_label = QLabel("Optimizations: \t" + self.optimizations[0])
+            self.optimizations_label = QLabel("Optimization: \t" + self.optimizations[0])
         else:
-            self.optimizations_label = QLabel("Optimizations: \t-")
+            self.optimizations_label = QLabel("Optimization: \t-")
         self.optimizations_label.setStyleSheet("font: 12pt " + FONT_STYLE)
         self.optimizations_label.setFixedWidth(600)
         self.optimizations_label.setFixedHeight(30)
@@ -124,24 +139,6 @@ class UILoadWindow(QWidget):
             self.data_loader_label.setAlignment(Qt.AlignLeft)
         else:
             self.data_loader_label.setVisible(False)
-        
-        self.model_memory_label = QLabel("Model memory:\t")
-        self.model_memory_label.setStyleSheet("font: 12pt " + FONT_STYLE)
-        self.model_memory_label.setFixedWidth(150)
-        self.model_memory_label.setFixedHeight(30)
-        self.model_memory_label.setAlignment(Qt.AlignLeft)
-        
-        self.model_memory = QLineEdit(self)
-        self.model_memory.setStyleSheet("font: 12pt " + FONT_STYLE)
-        self.model_memory.setFixedWidth(60)
-        self.model_memory.setFixedHeight(30)
-        self.model_memory.setAlignment(Qt.AlignLeft)
-        
-        self.model_memory_label_kb = QLabel("kB")
-        self.model_memory_label_kb.setStyleSheet("font: 12pt " + FONT_STYLE)
-        self.model_memory_label_kb.setFixedWidth(30)
-        self.model_memory_label_kb.setFixedHeight(30)
-        self.model_memory_label_kb.setAlignment(Qt.AlignLeft)
         
         self.Schritt = QLabel(self)
         Schritt_img = QPixmap(os.path.join('Images', 'GUI_progress_bar_Demonstrator', 'GUI_demonstrator_step_4.png'))

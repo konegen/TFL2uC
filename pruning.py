@@ -1,5 +1,3 @@
-#PRUNING NEU
-
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.models import load_model
 from tensorflow.keras.models import Model
@@ -729,8 +727,7 @@ def pruning_for_acc(keras_model, x_train, x_val_y_train, comp, pruning_acc=None,
 def prune_model(keras_model, prun_factor_dense=10, prun_factor_conv=10, metric='L1', comp=None, num_classes=None, label_one_hot=None):
     """
     A given keras model get pruned. The factor for dense and conv says how many percent
-    of the dense and conv layers should be deleted. After pruning the model will be
-    retrained.
+    of the dense and conv layers should be deleted.
     
     Args: 
         keras_model:       Model which should be pruned

@@ -1,12 +1,6 @@
-import sys
-import os
-
-
-import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
 
 from UIWindows.UILoadWindow import *
 
@@ -25,7 +19,6 @@ def LoadWindow(self, LastWindow):
     Args:
         LastWindow: Which window was the last one
     """
-
     if self.optimizations:
         self.data_loader_path = LastWindow.Daten_Pfad.text()
         
@@ -38,11 +31,14 @@ def LoadWindow(self, LastWindow):
             msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             msg.exec_()
             return     
-             
+
 
     
     self.Window4 = UILoadWindow(self.FONT_STYLE, self.model_path, self.project_name, self.output_path, self.data_loader_path, self.optimizations, self.prun_type, self.prun_factor_dense, self.prun_factor_conv, self.prun_acc_type, self.prun_acc, self.quant_dtype, self.separator, self.csv_target_label, self)
     
+    if isinstance(self.model_memory, int):
+        self.Window4.model_memory.setText(str(self.model_memory))
+
     self.Window4.Back.clicked.connect(lambda:nextWindow(self, self.optimizations))
     
     self.Window4.Load.clicked.connect(lambda:self.model_pruning(self.Window4))

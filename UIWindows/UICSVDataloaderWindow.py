@@ -1,10 +1,9 @@
-import sys
 import os
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-import pandas as pd
 
 class UICSVDataloaderWindow(QWidget):
     """Get a preview and load CSV data. 
@@ -17,13 +16,13 @@ class UICSVDataloaderWindow(QWidget):
         super(UICSVDataloaderWindow, self).__init__(parent)
 
         self.setWindowModality(Qt.ApplicationModal)
-        
-        self.FONT_STYLE = FONT_STYLE 
 
-        self.window_width, self.window_height = 700, 400
-        self.resize(self.window_width, self.window_height)
+        self.window_width, self.window_height = 700, 500
+        self.setFixedSize(self.window_width, self.window_height)
         self.setWindowTitle('CSV dataloader')
         self.setWindowIcon(QIcon(os.path.join("Images", "Window_Icon_blue.png")))
+        
+        self.FONT_STYLE = FONT_STYLE 
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -34,6 +33,7 @@ class UICSVDataloaderWindow(QWidget):
         self.Browse = QPushButton('Browse...')
         self.Browse.setFixedWidth(150)
         self.Browse.setFixedHeight(30)
+        self.Browse.setToolTip('Select a CSV file')
         self.Browse.setStyleSheet("""QPushButton {
                            font: 12pt """ + FONT_STYLE + """}
                            QPushButton::hover {
@@ -46,6 +46,8 @@ class UICSVDataloaderWindow(QWidget):
         self.Preview = QPushButton('Preview')
         self.Preview.setFixedWidth(150)
         self.Preview.setFixedHeight(30)
+        self.Preview.setToolTip('Show an overview of how the data will look with\n'
+                                'the selected settings, in the table above.')
         self.Preview.setStyleSheet("""QPushButton {
                            font: 12pt """ + FONT_STYLE + """}
                            QPushButton::hover {
@@ -58,6 +60,8 @@ class UICSVDataloaderWindow(QWidget):
         self.Load_data = QPushButton('Load data')
         self.Load_data.setFixedWidth(150)
         self.Load_data.setFixedHeight(30)
+        self.Load_data.setToolTip('Closes the CSV dataloader window and takes the\n'
+                                  'chosen settings for the later optimization.')
         self.Load_data.setStyleSheet("""QPushButton {
                            font: 12pt """ + FONT_STYLE + """}
                            QPushButton::hover {
@@ -80,7 +84,7 @@ class UICSVDataloaderWindow(QWidget):
 
         self.label_col = QLabel("Label column:")
         self.label_col.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.label_col.setFixedWidth(200)
+        self.label_col.setFixedWidth(250)
         self.label_col.setVisible(False)
 
         self.cbTab = QCheckBox('Tab stop', self)
@@ -98,7 +102,7 @@ class UICSVDataloaderWindow(QWidget):
         
         self.cb_label_col = QComboBox()
         self.cb_label_col.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.cb_label_col.setFixedWidth(200)
+        self.cb_label_col.setFixedWidth(80)
         self.cb_label_col.addItems(["First", "Last"])
         self.cb_label_col.setVisible(False)
 
@@ -112,11 +116,14 @@ class UICSVDataloaderWindow(QWidget):
         sublayout3.addWidget(self.cb_label_col)
         sublayout3.addStretch()
         sublayout3.addStretch()
+        sublayout3.addStretch()
+        sublayout3.addStretch()
         layout.addLayout(sublayout3)
 
         self.numRow = QLabel()
         self.numRow.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.numRow.setFixedWidth(200)
+        self.numRow.setFixedWidth(250)
+        self.numRow.setAlignment(Qt.AlignLeft)
 
         self.cbComma = QCheckBox('Comma', self)
         self.cbComma.setStyleSheet("font: 11pt " + FONT_STYLE)
@@ -132,7 +139,8 @@ class UICSVDataloaderWindow(QWidget):
 
         self.numCol = QLabel()
         self.numCol.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.numCol.setFixedWidth(200)
+        self.numCol.setFixedWidth(250)
+        self.numCol.setAlignment(Qt.AlignLeft)
 
         self.cbSpace = QCheckBox('Space', self)
         self.cbSpace.setStyleSheet("font: 11pt " + FONT_STYLE)

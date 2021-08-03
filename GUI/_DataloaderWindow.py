@@ -1,14 +1,9 @@
-import sys
-import os
-
-
-import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-
 from UIWindows.UIDataloaderWindow import *
+
 
 def DataloaderWindow(self, n, LastWindow):
     """Activates the GUI window of the data loader.
@@ -39,7 +34,6 @@ def DataloaderWindow(self, n, LastWindow):
             
             elif "Factor" in self.prun_type:
                 try:
-                    # if int(LastWindow.Pruning_Dense.text()) < 5 or int(LastWindow.Pruning_Dense.text()) > 95  or int(LastWindow.Pruning_Conv.text()) < 5  or int(LastWindow.Pruning_Conv.text()) > 95:
                     if int(LastWindow.Pruning_Dense.text()) > 95  or int(LastWindow.Pruning_Conv.text()) > 95:
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Warning)
@@ -115,6 +109,13 @@ def DataloaderWindow(self, n, LastWindow):
             msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             msg.exec_()
             return
+    
+    else:
+        if LastWindow.model_memory != "":
+            try:
+                self.model_memory = int(LastWindow.model_memory.text())
+            except:
+                self.model_memory = None
 
 
     self.Window3 = UIDataloaderWindow(self.FONT_STYLE, self)

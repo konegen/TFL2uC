@@ -1,10 +1,10 @@
 import os
-import sys
 import ntpath
 import pathlib
 
 from Auto_TF_to_uC.convert_keras_to_cc import *
 from Auto_TF_to_uC.write_files_uc import *
+
 
 def convert_and_write(Keras_model_dir, project_name, output_path, optimizations, data_loader_path, quant_dtype, separator, csv_target_label, model_memory):
     """

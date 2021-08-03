@@ -1,15 +1,10 @@
-import sys
-import os
-
-
-import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-
 from UIWindows.UIOptiWindow import *
-        
+
+
 def OptiWindow(self, n, LastWindow):
     """Activates the GUI window to select the optimizations.
 

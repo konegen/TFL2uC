@@ -5,7 +5,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 
-
 class UIStartWindow(QWidget):
     """Select project name, output path and model path. 
 
@@ -45,17 +44,18 @@ class UIStartWindow(QWidget):
         self.project_name.setFixedWidth(200)
         
         self.model_path = QLabel("")
-        self.model_path.setFixedWidth(300)
+        self.model_path.setFixedWidth(400)
         self.model_path.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.model_path.setAlignment(Qt.AlignCenter)
         
         self.output_path = QLabel("")
-        self.output_path.setFixedWidth(300)
+        self.output_path.setFixedWidth(400)
         self.output_path.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.output_path.setAlignment(Qt.AlignCenter)
         
         self.output_path_Browse = QPushButton(" Output path... ", self)
-        self.output_path_Browse.setToolTip('...')
+        self.output_path_Browse.setToolTip('Select a path where the TFL2uC\n'
+                                           'project should be stored.')
         self.output_path_Browse.setStyleSheet("""QPushButton {
                            font: 12pt """ + FONT_STYLE + """}
                            QPushButton::hover {
@@ -66,7 +66,9 @@ class UIStartWindow(QWidget):
                            border: black solid 1px}""")  
         
         self.read_model_browse = QPushButton(" Select Model... ", self)
-        self.read_model_browse.setToolTip('...')
+        self.read_model_browse.setToolTip('Select a TensorFlow/Keras model (.h5 file)\n'
+                                          'which should be converted to a TensorFlow\n'
+                                          'Lite C++ file, to execute it on a MCU')
         self.read_model_browse.setStyleSheet("""QPushButton {
                            font: 12pt """ + FONT_STYLE + """}
                            QPushButton::hover {

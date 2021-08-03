@@ -184,7 +184,7 @@ def TensorFlow_library(project_dir):
     Args: 
         project_dir: Path of the project directory where the file should be created
     """    
-    shutil.copytree(str(pathlib.Path(__file__).parent.absolute()) + "/templates/TensorFlow_library", project_dir + "/TensorFlow_library")
+    shutil.copytree(str(pathlib.Path(__file__).parent.absolute()) + "/TensorFlow_library", project_dir + "/TensorFlow_library")
 
 
 def pruned_keras_model(Keras_model_dir, project_dir, model_name):

@@ -5,7 +5,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 
-
 class UIDataloaderWindow(QWidget):
     """Select a dataloader for optimization. 
 
@@ -18,7 +17,7 @@ class UIDataloaderWindow(QWidget):
         
         self.FONT_STYLE = FONT_STYLE          
         
-        self.Daten_label = QLabel("Training data:")
+        self.Daten_label = QLabel("Training data")
         self.Daten_label.setStyleSheet("font: 12pt " + FONT_STYLE)
         
         self.Datapng = QLabel(self)
@@ -39,7 +38,7 @@ class UIDataloaderWindow(QWidget):
         self.Abstand_unten.setFixedHeight(50)
         
         self.Daten_Pfad = QLabel("")
-        self.Daten_Pfad.setFixedWidth(300)
+        self.Daten_Pfad.setFixedWidth(400)
         self.Daten_Pfad.setStyleSheet("font: 11pt " + FONT_STYLE)
         self.Daten_Pfad.setAlignment(Qt.AlignCenter)
 
@@ -51,7 +50,17 @@ class UIDataloaderWindow(QWidget):
         self.Abstand_dataloader_list.setFixedWidth(170) 
         
         self.Daten_einlesen_Browse = QPushButton(" Select Data... ", self)
-        self.Daten_einlesen_Browse.setToolTip('...')
+        self.Daten_einlesen_Browse.setToolTip('Select the training data which the neural network requires for the optimization.\n'
+                                              'The data can be transferred in different ways:\n'
+                                              '- PATH (folder):\tImages are to be used as training data. In the given path there are\n'
+                                              '\t\tsubfolders containing the name of the different classes of the neural\n'
+                                              '\t\tnetwork and the corresponding images.\n'
+                                              '- FILE (*.csv): The data is stored in a CSV file.\n'
+                                              '- FILE (*.py):  The data is loaded and returned in a Python script. It\n'
+                                              '                      is important that the Python script contains the function\n'
+                                              '                      get_data() with the return values x_train, y_train, x_test,\n'
+                                              '                      y_test (training data, training label, test data, test label).\n'
+                                              '                      The return values here are Numpy arrays.')
         self.Daten_einlesen_Browse.setStyleSheet("""QPushButton {
                            font: 12pt """ + FONT_STYLE + """}
                            QPushButton::hover {

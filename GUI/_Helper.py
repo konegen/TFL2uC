@@ -4,17 +4,14 @@ import matplotlib.image as mpimg
 import numpy as np
 import random
 import cv2
-from numpy.lib.stride_tricks import as_strided
-import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import csv
 import pandas as pd
-import math
+import tensorflow as tf
+from tensorflow.python.framework.tensor_shape import as_dimension
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from tensorflow.python.framework.tensor_shape import as_dimension
 
 def get_output_path(self, CurWindow):
     """Get the path where the genareted Project should be stored
@@ -58,14 +55,14 @@ def get_data_loader(self, CurWindow):
         self.data_loader_path = QFileDialog.getExistingDirectory(self, "Select your trainingdata path", os.path.expanduser('~'))
     elif "Select FILE with data" in CurWindow.dataloader_list.currentText():
         self.data_loader_path = QFileDialog.getOpenFileName(self, "Select your data loader script", os.path.expanduser('~'), 'CSV(*.csv);; Python(*.py)')[0]
-    CurWindow.Daten_Pfad.setText(self.data_loader_path)
-    print(CurWindow.Daten_Pfad.text())
 
     if ".csv" in self.data_loader_path:
-        print("SIE HABEN EINE CSV-DATEI AUSGEWÄHLT")
+        print("CSV file selected")
         self.CSVDataloaderWindow()
     else:
-        print("KEINE CSV-DATEI")
+        print("No CSV file")
+        CurWindow.Daten_Pfad.setText(self.data_loader_path)
+        print(CurWindow.Daten_Pfad.text())
 
 
 def set_pruning(self, CurWindow):
@@ -89,10 +86,6 @@ def set_pruning(self, CurWindow):
         if self.prun_type != None:
             set_prun_type(self, self.prun_type, CurWindow, True)
 
-
-        # CurWindow.Quantization.setIconSize(QSize(100, 100))
-        # CurWindow.Quantization.setGeometry(540, 85, 120, 120)
-
     else:
         if "Pruning" in self.optimizations:
             self.optimizations.remove("Pruning")
@@ -109,9 +102,6 @@ def set_pruning(self, CurWindow):
         CurWindow.acc_loss.setVisible(False)   
         CurWindow.prun_acc_label.setVisible(False)
         CurWindow.prun_acc_edit.setVisible(False) 
-
-        # CurWindow.Pruning.setIconSize(QSize(150, 150))
-        # CurWindow.Pruning.setGeometry(120, 85, 170, 170)
 
 def set_quantization(self, CurWindow):
     """Adds or removes quantization from optimization.
@@ -136,9 +126,6 @@ def set_quantization(self, CurWindow):
         CurWindow.quant_int.setVisible(True)
         CurWindow.quant_int_only.setVisible(True)
 
-        # CurWindow.Quantization.setIconSize(QSize(100, 100))
-        # CurWindow.Quantization.setGeometry(540, 85, 120, 120)
-
     else:
         if "Quantization" in self.optimizations:
             self.optimizations.remove("Quantization")
@@ -148,9 +135,6 @@ def set_quantization(self, CurWindow):
         CurWindow.quant_int_only.setVisible(False)
 
     print(self.optimizations)
-
-        # CurWindow.Quantization.setIconSize(QSize(150, 150))
-        # CurWindow.Quantization.setGeometry(515, 85, 170, 170)
 
 def set_prun_type(self, prun_type, CurWindow, Pruning_button):
     """Sets the pruning type.
@@ -179,6 +163,10 @@ def set_prun_type(self, prun_type, CurWindow, Pruning_button):
             CurWindow.Pruning_Conv_label.setVisible(True)
             CurWindow.Pruning_Dense_label.setVisible(True)
 
+            try:
+                self.prun_acc = int(CurWindow.prun_acc_edit.text())
+            except:
+                self.prun_acc = None
             CurWindow.min_acc.setVisible(False)
             CurWindow.acc_loss.setVisible(False)
             CurWindow.prun_acc_label.setVisible(False)
@@ -208,18 +196,24 @@ def set_prun_type(self, prun_type, CurWindow, Pruning_button):
             if self.prun_acc_type != None and "Minimal accuracy" in self.prun_acc_type:
                 CurWindow.min_acc.setChecked(True)
                 CurWindow.acc_loss.setChecked(False)
-                CurWindow.prun_acc_label.setVisible(True)
                 CurWindow.prun_acc_label.setText("Min accuracy\nto reach in %")
+                CurWindow.prun_acc_label.setVisible(True)
                 CurWindow.prun_acc_edit.setVisible(True)
-                CurWindow.prun_acc_edit.setText(str(self.prun_acc))
+                if self.prun_acc == None:
+                    CurWindow.prun_acc_edit.setText("")
+                else:
+                    CurWindow.prun_acc_edit.setText(str(self.prun_acc))
 
-            elif self.prun_acc_type != None and  "Accuracy loss" in self.prun_acc_type:
+            elif self.prun_acc_type != None and "Accuracy loss" in self.prun_acc_type:
                 CurWindow.min_acc.setChecked(False)
                 CurWindow.acc_loss.setChecked(True)
-                CurWindow.prun_acc_label.setVisible(True)
                 CurWindow.prun_acc_label.setText("Max accuracy\nloss in %")
+                CurWindow.prun_acc_label.setVisible(True)
                 CurWindow.prun_acc_edit.setVisible(True)
-                CurWindow.prun_acc_edit.setText(str(self.prun_acc))
+                if self.prun_acc == None:
+                    CurWindow.prun_acc_edit.setText("")
+                else:
+                    CurWindow.prun_acc_edit.setText(str(self.prun_acc))
 
             try:
                 self.prun_factor_dense = int(CurWindow.Pruning_Dense.text())
@@ -233,7 +227,11 @@ def set_prun_type(self, prun_type, CurWindow, Pruning_button):
             CurWindow.Pruning_Dense_label.setVisible(False)
         else:
             self.prun_type = None
-            
+
+            try:
+                self.prun_acc = int(CurWindow.prun_acc_edit.text())
+            except:
+                self.prun_acc = None            
             CurWindow.min_acc.setVisible(False)
             CurWindow.acc_loss.setVisible(False)
             CurWindow.prun_acc_label.setVisible(False)
@@ -382,13 +380,14 @@ def model_pruning(self, CurWindow):
     CurWindow.data_loader_label.setVisible(False)
     CurWindow.model_memory_label.setVisible(False)
     CurWindow.model_memory.setVisible(False)
+    CurWindow.model_memory_label_kb.setVisible(False)
 
     CurWindow.Back.setVisible(False)
     CurWindow.Load.setVisible(False)
 
     CurWindow.Loadpng.setVisible(True)
 
-    CurWindow.loading_images.start()
+    CurWindow.loading_images.run()
     CurWindow.prune_model.start()
 
 def download(self, CurWindow):
@@ -601,7 +600,6 @@ def previewCSVData(self, CurWindow):
             df.fillna('', inplace=True)
             CurWindow.table.setRowCount(df.shape[0])
             CurWindow.table.setColumnCount(df.shape[1])
-            # CurWindow.table.setHorizontalHeaderLabels(df.columns)
             # returns pandas array object
             for row in df.iterrows():
                 values = row[1]
@@ -611,12 +609,11 @@ def previewCSVData(self, CurWindow):
                     tableItem = QTableWidgetItem(str(value))
                     CurWindow.table.setItem(row[0], col_index, tableItem)
 
-            CurWindow.table.setColumnWidth(2, 300)
             CurWindow.label_col.setVisible(True)
             CurWindow.cb_label_col.setVisible(True)
 
-            CurWindow.numRow.setText("Number of Rows:    " + str(df.shape[0]))
-            CurWindow.numCol.setText("Number of Columns: " + str(df.shape[1]))
+            CurWindow.numRow.setText("Total rows:\t" + str(df.shape[0]))
+            CurWindow.numCol.setText("Total columns:\t" + str(df.shape[1]))
         
         else:
             msg = QMessageBox()
@@ -638,12 +635,13 @@ def previewCSVData(self, CurWindow):
         
 
 
-def loadCSVData(self, CurWindow):
+def loadCSVData(self, CurWindow, MainWindow):
     """Stores the target column of the CSV file and closes the window.
     """
     if CurWindow.cb_label_col.isVisible() == True:
         self.csv_target_label = CurWindow.cb_label_col.currentText()
         CurWindow.close()
+        MainWindow.Daten_Pfad.setText(self.data_loader_path)
     else:
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
@@ -696,6 +694,9 @@ def get_separator(self, CurWindow):
         
     print(self.separator)
 
+
+def closeEvent(self, event):
+    print("Hello")
 
 
 class ThresholdCallback(tf.keras.callbacks.Callback):

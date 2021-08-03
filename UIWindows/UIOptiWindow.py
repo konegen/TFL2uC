@@ -5,7 +5,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 
-
 class UIOptiWindow(QWidget):
     """Select a optimization algorithm. 
 
@@ -100,7 +99,10 @@ class UIOptiWindow(QWidget):
         self.prun_fac.setFixedHeight(30)
         self.prun_fac.setCheckable(True)
         self.prun_fac.setVisible(False)
-        self.prun_fac.setToolTip('...\n')
+        self.prun_fac.setToolTip('For the fully connected and convolutional layers, a\n'
+                                 'factor is specified in each case, which indicates\n'
+                                 'the percentage of neurons or filters to be deleted\n'
+                                 'from the layer.')
         self.prun_fac.setStyleSheet("""QPushButton {
                            font: 9pt """ + FONT_STYLE + """}
                            QToolTip { 
@@ -118,7 +120,9 @@ class UIOptiWindow(QWidget):
         self.prun_acc.setFixedHeight(30)
         self.prun_acc.setCheckable(True)
         self.prun_acc.setVisible(False)
-        self.prun_acc.setToolTip('...\n')
+        self.prun_acc.setToolTip('The minimum accuracy of the neural network or the\n'
+                                 'loss of accuracy that may result from pruning can\n'
+                                 'be specified here.')
         self.prun_acc.setStyleSheet("""QPushButton {
                            font: 9pt """ + FONT_STYLE + """}
                            QToolTip { 
@@ -191,8 +195,8 @@ class UIOptiWindow(QWidget):
         self.quant_int.setCheckable(True)
         self.quant_int.setVisible(False)
         self.quant_int.setToolTip('This quantization approach converts all weights\n'
-                                     'to int8 values. But the input and output\n'
-                                     'still remain 32-bit float.')
+                                  'to int8 values. But the input and output still\n'
+                                  'remain 32-bit float.')
         self.quant_int.setStyleSheet("""QPushButton {
                            font: 9pt """ + FONT_STYLE + """}
                            QToolTip { 
@@ -204,8 +208,6 @@ class UIOptiWindow(QWidget):
                            {
                            background-color : rgb(10, 100, 200);
                            }""")
-        # self.quant_int.setDisabled(True)
-        # self.quant_int.setStyleSheet("font: 12pt " + FONT_STYLE + ";" + "background-color : gray")
         
         self.quant_int_only = QPushButton("int8 only", self)
         self.quant_int_only.setFixedWidth(90)
@@ -213,8 +215,8 @@ class UIOptiWindow(QWidget):
         self.quant_int_only.setCheckable(True)
         self.quant_int_only.setVisible(False)
         self.quant_int_only.setToolTip('This quantization approach converts all weights\n'
-                                     'to int8 values. Also the input and output\n'
-                                     'will be converted to 8-bit integer.')
+                                       'to int8 values. Also the input and output will\n'
+                                       'be converted to 8-bit integer.')
         self.quant_int_only.setStyleSheet("""QPushButton {
                            font: 10pt """ + FONT_STYLE + """}
                            QToolTip { 

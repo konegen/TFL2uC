@@ -1,15 +1,10 @@
 import sys
-import os
 
-
-import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-
 from GUI import MainWindow
-
 
 app = QApplication(sys.argv)
 # Force the style to be the same on all OSs:

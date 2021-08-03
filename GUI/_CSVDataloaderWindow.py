@@ -1,14 +1,9 @@
-import sys
-import os
-
-
-import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-
 from UIWindows.UICSVDataloaderWindow import *
+
 
 def CSVDataloaderWindow(self):
     """Activates the GUI window to preview and load CSV data.
@@ -25,7 +20,6 @@ def CSVDataloaderWindow(self):
 
     self.Window3_1.Browse.clicked.connect(self.browseCSVData)
     self.Window3_1.Preview.clicked.connect(lambda: self.previewCSVData(self.Window3_1))
-    self.Window3_1.Load_data.clicked.connect(lambda: self.loadCSVData(self.Window3_1))
+    self.Window3_1.Load_data.clicked.connect(lambda: self.loadCSVData(self.Window3_1, self.Window3))
 
-    # self.setCentralWidget(self.Window3_1)
     self.Window3_1.show()
