@@ -38,28 +38,28 @@ pip install -r requirements.txt
 To start TFL2uC, the Start.py file is executed. </br>Afterwards the fist window of the GUI will be opened. In the first window the project name, the output path and the neural network to be converted are passed.
 
 <p align="center">
-<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_1.png" width="45%" height="45%">
+<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_1.PNG" width="45%" height="45%">
 </p>
 
 
 In the second window of the GUI, the optimization algorithms pruning and quantization can be selected. It is important to know that only for fully connected and convolutional layers the pruning algorithm can be applied.
 
 <p align="center">
-<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2.png" width="45%" height="45%">
+<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2.PNG" width="45%" height="45%">
 </p>
 
 If you select pruning, you can choose between two options:
 - Factor: For the fully connected and convolutional layers, a factor is specified in each case, which indicates the percentage of neurons or filters to be deleted from the layer.
 
 <p align="center">
-<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2a.png" width="45%" height="45%">
+<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2a.PNG" width="45%" height="45%">
 </p>
 
 - Accuracy: The minimum accuracy of the neural network or the loss of accuracy that may result from pruning can be specified here.
 
 <p align="center">
-<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2b.png" width="45%" height="45%">
-<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2c.png" width="45%" height="45%">
+<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2b.PNG" width="45%" height="45%">
+<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2c.PNG" width="45%" height="45%">
 </p>
 
 If quantization is selected, you can choose between two options:
@@ -67,7 +67,7 @@ If quantization is selected, you can choose between two options:
 - int8 only: All weights get converted to int8 values. Also the input and output will be converted to 8-bit integer. When executing the net on a microcontroller later, the input values of the model must be passed as unsigned int8 values. Also the output values are returned as unsigned int8 values.
 
 <p align="center">
-<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2d.png" width="45%" height="45%">
+<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2d.PNG" width="45%" height="45%">
 </p>
 
 
@@ -77,20 +77,20 @@ The next window appears only if at least one optimization algorithm has been sel
 - File (Python file): The data is loaded and returned in a Python script. Here it is important that the Python script contains the function get_data() with the return values x_train, y_train, x_test, y_test (training data, training label, test data, test label). The return values here are Numpy arrays.
 
 <p align="center">
-<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_3.png" width="45%" height="45%">
+<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_3.PNG" width="45%" height="45%">
 </p>
 
 If a CSV file is selected the CSV dataloader window opens. With the browse button a new CSV file can be selected again. By using the different separators, it is possible to define how the data is separated. The Preview button shows an overview of how the data will look with the selected settings. In addition, the label of each data series must be specified. Here it is possible to set the label to the first or the last position of a data series. In addition, the number of rows and columns in the data set is displayed. If all settings are correct, the settings can be taken over for the later optimization via the button Load data.
 
 <p align="center">
-<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_3a.png" width="45%" height="45%">
+<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_3a.PNG" width="45%" height="45%">
 </p>
 
 
 In the last window of the GUI, the amount of memory for the input, output, and intermediate arrays of the neural network on the microcontroller must be specified. In addition, an overview of all selected parameters is displayed here. The button in the lower right corner starts the process of the conversion.
 
 <p align="center">
-<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_4.png" width="45%" height="45%">
+<img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_4.PNG" width="45%" height="45%">
 </p>
 
 
