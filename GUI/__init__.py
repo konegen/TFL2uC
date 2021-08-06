@@ -34,29 +34,49 @@ class MainWindow(QMainWindow):
 
     from ._Helper import (
         get_output_path,
+        set_output_path_label,
         get_model_path,
+        set_model_path_label,
         get_data_loader,
+        set_data_loader_label,
         set_pruning,
         set_quantization,
         set_prun_type,
         set_prun_acc_type,
         set_quant_dtype,
-        get_optimization,
         model_pruning,
         download,
         terminate_thread,
+        dataloader_quantization,
+        dataloader_pruning,
         browseCSVData,
         previewCSVData,
         loadCSVData,
         get_separator
     )
 
-    def __init__(self, parent=None):
+    def __init__(self, screen_width, screen_height, parent=None):
         
         super(MainWindow, self).__init__(parent)
 
-        self.window_width, self.window_height = 800, 600
-        self.setFixedSize(self.window_width, self.window_height)
+        """Set width and height of the window in respect to the resolution of the screen
+        """
+        if screen_width/screen_height >= 2: #>= 2:1
+            self.WINDOW_WIDTH, self.WINDOW_HEIGHT = int(0.4*screen_width), int(0.64*screen_height)
+        elif screen_width/screen_height <= 0.5: #>= 2:1 Hochformat
+            self.WINDOW_WIDTH, self.WINDOW_HEIGHT = int(0.85*screen_width), int(0.3*screen_height)
+        elif abs(screen_width/screen_height - 4/3) < 0.1: #4:3
+            self.WINDOW_WIDTH, self.WINDOW_HEIGHT = int(0.55*screen_width), int(0.5*screen_height)
+        elif abs(screen_width/screen_height - 3/4) < 0.1: #4:3 Hochformat
+            self.WINDOW_WIDTH, self.WINDOW_HEIGHT = int(0.75*screen_width), int(0.4*screen_height)
+        elif abs(screen_width/screen_height - 16/10) < 0.1: #16:10
+            self.WINDOW_WIDTH, self.WINDOW_HEIGHT = int(0.5*screen_width), int(0.6*screen_height)
+        elif abs(screen_width/screen_height - 10/16) < 0.1: #16:10 Hochformat
+            self.WINDOW_WIDTH, self.WINDOW_HEIGHT = int(0.8*screen_width), int(0.35*screen_height)
+        else:
+            self.WINDOW_WIDTH, self.WINDOW_HEIGHT = int(0.45*screen_width), int(0.6*screen_height)
+
+        self.setFixedSize(self.WINDOW_WIDTH, self.WINDOW_HEIGHT)
         self.setWindowTitle("TFL2uC")
         self.setWindowIcon(QIcon(os.path.join("Images", "Window_Icon_blue.png")))
 

@@ -12,61 +12,66 @@ class UICSVDataloaderWindow(QWidget):
     from the dataloader. You can also choose how to separate the 
     different columns and whats the target column.
     """
-    def __init__(self, FONT_STYLE, parent=None):
+    def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, FONT_STYLE, parent=None):
         super(UICSVDataloaderWindow, self).__init__(parent)
+
+        self.WINDOW_WIDTH = WINDOW_WIDTH
+        self.WINDOW_HEIGHT = WINDOW_HEIGHT
+        self.FONT_STYLE = FONT_STYLE
 
         self.setWindowModality(Qt.ApplicationModal)
 
-        self.window_width, self.window_height = 700, 500
-        self.setFixedSize(self.window_width, self.window_height)
+        self.setFixedSize(0.85*self.WINDOW_WIDTH, 0.85*self.WINDOW_HEIGHT)
         self.setWindowTitle('CSV dataloader')
-        self.setWindowIcon(QIcon(os.path.join("Images", "Window_Icon_blue.png")))
-        
-        self.FONT_STYLE = FONT_STYLE 
+        self.setWindowIcon(QIcon(os.path.join("Images", "Window_Icon_blue.png"))) 
 
         layout = QVBoxLayout()
         self.setLayout(layout)
 
         self.table = QTableWidget()
+        self.table.setStyleSheet("font: " + str(int(0.025*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
         layout.addWidget(self.table)
 
         self.Browse = QPushButton('Browse...')
-        self.Browse.setFixedWidth(150)
-        self.Browse.setFixedHeight(30)
+        self.Browse.setFixedWidth(0.2*self.WINDOW_WIDTH)
+        self.Browse.setFixedHeight(0.05*self.WINDOW_HEIGHT)
         self.Browse.setToolTip('Select a CSV file')
         self.Browse.setStyleSheet("""QPushButton {
-                           font: 12pt """ + FONT_STYLE + """}
+                           font: """ + str(int(0.035*self.WINDOW_HEIGHT)) + """px """ + FONT_STYLE + """}
                            QPushButton::hover {
                            background-color : rgb(10, 100, 200)}
                            QToolTip { 
+                           font: """ + str(int(0.025*self.WINDOW_HEIGHT)) + """px """ + FONT_STYLE + """;
                            background-color : rgb(53, 53, 53);
                            color: white; 
                            border: black solid 1px}""") 
 
         self.Preview = QPushButton('Preview')
-        self.Preview.setFixedWidth(150)
-        self.Preview.setFixedHeight(30)
+        self.Preview.setFixedWidth(0.2*self.WINDOW_WIDTH)
+        self.Preview.setFixedHeight(0.05*self.WINDOW_HEIGHT)
         self.Preview.setToolTip('Show an overview of how the data will look with\n'
                                 'the selected settings, in the table above.')
         self.Preview.setStyleSheet("""QPushButton {
-                           font: 12pt """ + FONT_STYLE + """}
+                           font: """ + str(int(0.035*self.WINDOW_HEIGHT)) + """px """ + FONT_STYLE + """}
                            QPushButton::hover {
                            background-color : rgb(10, 100, 200)}
                            QToolTip { 
+                           font: """ + str(int(0.025*self.WINDOW_HEIGHT)) + """px """ + FONT_STYLE + """;
                            background-color : rgb(53, 53, 53);
                            color: white; 
                            border: black solid 1px}""") 
 
         self.Load_data = QPushButton('Load data')
-        self.Load_data.setFixedWidth(150)
-        self.Load_data.setFixedHeight(30)
+        self.Load_data.setFixedWidth(0.2*self.WINDOW_WIDTH)
+        self.Load_data.setFixedHeight(0.05*self.WINDOW_HEIGHT)
         self.Load_data.setToolTip('Closes the CSV dataloader window and takes the\n'
                                   'chosen settings for the later optimization.')
         self.Load_data.setStyleSheet("""QPushButton {
-                           font: 12pt """ + FONT_STYLE + """}
+                           font: """ + str(int(0.035*self.WINDOW_HEIGHT)) + """px """ + FONT_STYLE + """}
                            QPushButton::hover {
                            background-color : rgb(10, 100, 200)}
                            QToolTip { 
+                           font: """ + str(int(0.025*self.WINDOW_HEIGHT)) + """px """ + FONT_STYLE + """;
                            background-color : rgb(53, 53, 53);
                            color: white; 
                            border: black solid 1px}""") 
@@ -78,18 +83,18 @@ class UICSVDataloaderWindow(QWidget):
         layout.addLayout(sublayout)
 
         self.separator = QLabel("Separator:")
-        self.separator.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.separator.setFixedWidth(200)
+        self.separator.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.separator.setFixedWidth(0.25*self.WINDOW_WIDTH)
         layout.addWidget(self.separator)
 
         self.label_col = QLabel("Label column:")
-        self.label_col.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.label_col.setFixedWidth(250)
+        self.label_col.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.label_col.setFixedWidth(0.3*self.WINDOW_WIDTH)
         self.label_col.setVisible(False)
 
         self.cbTab = QCheckBox('Tab stop', self)
-        self.cbTab.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.cbTab.setFixedWidth(150)
+        self.cbTab.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.cbTab.setFixedWidth(0.2*self.WINDOW_WIDTH)
         layout.addWidget(self.cbTab)
 
         sublayout2 = QHBoxLayout()
@@ -101,14 +106,14 @@ class UICSVDataloaderWindow(QWidget):
         layout.addLayout(sublayout2)
         
         self.cb_label_col = QComboBox()
-        self.cb_label_col.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.cb_label_col.setFixedWidth(80)
+        self.cb_label_col.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.cb_label_col.setFixedWidth(0.1*self.WINDOW_WIDTH)
         self.cb_label_col.addItems(["First", "Last"])
         self.cb_label_col.setVisible(False)
 
         self.cbSemicolon = QCheckBox('Semicolon', self)
-        self.cbSemicolon.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.cbSemicolon.setFixedWidth(150)
+        self.cbSemicolon.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.cbSemicolon.setFixedWidth(0.2*self.WINDOW_WIDTH)
 
         sublayout3 = QHBoxLayout()
         sublayout3.addWidget(self.cbSemicolon)
@@ -121,13 +126,13 @@ class UICSVDataloaderWindow(QWidget):
         layout.addLayout(sublayout3)
 
         self.numRow = QLabel()
-        self.numRow.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.numRow.setFixedWidth(250)
+        self.numRow.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.numRow.setFixedWidth(0.3*self.WINDOW_WIDTH)
         self.numRow.setAlignment(Qt.AlignLeft)
 
         self.cbComma = QCheckBox('Comma', self)
-        self.cbComma.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.cbComma.setFixedWidth(150)
+        self.cbComma.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.cbComma.setFixedWidth(0.2*self.WINDOW_WIDTH)
 
         sublayout4 = QHBoxLayout()
         sublayout4.addWidget(self.cbComma)
@@ -138,13 +143,13 @@ class UICSVDataloaderWindow(QWidget):
         layout.addLayout(sublayout4)
 
         self.numCol = QLabel()
-        self.numCol.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.numCol.setFixedWidth(250)
+        self.numCol.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.numCol.setFixedWidth(0.3*self.WINDOW_WIDTH)
         self.numCol.setAlignment(Qt.AlignLeft)
 
         self.cbSpace = QCheckBox('Space', self)
-        self.cbSpace.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.cbSpace.setFixedWidth(150)
+        self.cbSpace.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.cbSpace.setFixedWidth(0.2*self.WINDOW_WIDTH)
 
         sublayout5 = QHBoxLayout()
         sublayout5.addWidget(self.cbSpace)
@@ -155,13 +160,13 @@ class UICSVDataloaderWindow(QWidget):
         layout.addLayout(sublayout5)
 
         self.cbOther = QCheckBox('other', self)
-        self.cbOther.setStyleSheet("font: 11pt " + FONT_STYLE)
-        self.cbOther.setFixedWidth(65)
+        self.cbOther.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
+        self.cbOther.setFixedWidth(0.095*self.WINDOW_WIDTH)
 
         self.other_separator = QLineEdit()
-        self.other_separator.setFixedWidth(30)
+        self.other_separator.setFixedWidth(0.05*self.WINDOW_WIDTH)
         self.other_separator.setMaxLength(1)
-        self.other_separator.setStyleSheet("font: 11pt " + FONT_STYLE)
+        self.other_separator.setStyleSheet("font: " + str(int(0.032*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
 
         sublayout6 = QHBoxLayout()
         sublayout6.addWidget(self.cbOther)

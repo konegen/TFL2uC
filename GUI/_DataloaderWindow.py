@@ -38,7 +38,7 @@ def DataloaderWindow(self, n, LastWindow):
                         msg = QMessageBox()
                         msg.setIcon(QMessageBox.Warning)
                         
-                        msg.setText("Enter prunefactors less than 95")
+                        msg.setText("Enter pruning factors of up to 95%")
                         msg.setWindowTitle("Warning")
                         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
                         msg.exec_()
@@ -73,7 +73,7 @@ def DataloaderWindow(self, n, LastWindow):
                             msg = QMessageBox()
                             msg.setIcon(QMessageBox.Warning)
                             
-                            msg.setText("Enter a value for minimal Accuracy between 50 and 99")
+                            msg.setText("Enter a value for minimal Accuracy between 50% and 99%")
                             msg.setWindowTitle("Warning")
                             msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
                             msg.exec_()
@@ -83,7 +83,7 @@ def DataloaderWindow(self, n, LastWindow):
                             msg = QMessageBox()
                             msg.setIcon(QMessageBox.Warning)
                             
-                            msg.setText("Enter a value for maximal accuracy loss between 1 and 20")
+                            msg.setText("Enter a value for maximal accuracy loss between 1% and 20%")
                             msg.setWindowTitle("Warning")
                             msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
                             msg.exec_()
@@ -118,12 +118,12 @@ def DataloaderWindow(self, n, LastWindow):
                 self.model_memory = None
 
 
-    self.Window3 = UIDataloaderWindow(self.FONT_STYLE, self)
+    self.Window3 = UIDataloaderWindow(self.WINDOW_WIDTH, self.WINDOW_HEIGHT, self.FONT_STYLE, self)
 
     if self.data_loader_path != None:
-        self.Window3.Daten_Pfad.setText(self.data_loader_path)
+        self.set_data_loader_label(self.Window3)
 
-    self.Window3.Daten_einlesen_Browse.clicked.connect(lambda: self.get_data_loader(self.Window3))
+    self.Window3.select_data_browse.clicked.connect(lambda: self.get_data_loader(self.Window3))
 
     self.Window3.Back.clicked.connect(lambda: self.OptiWindow("Back", self.Window3))
     self.Window3.Next.clicked.connect(lambda: self.LoadWindow(self.Window3))

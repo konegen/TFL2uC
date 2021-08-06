@@ -1,3 +1,8 @@
+''' Copyright [2020] Hahn-Schickard-Gesellschaft für angewandte Forschung e.V., Daniel Konegen + Marcus Rueb
+    Copyright [2021] Karlsruhe Institute of Technology, Daniel Konegen
+    SPDX-License-Identifier: Apache-2.0
+============================================================================================================'''
+
 import sys
 
 from PyQt5.QtWidgets import *
@@ -29,7 +34,11 @@ app.setPalette(palette)
 
 app.setStyleSheet("QPushButton:pressed { background-color: rgb(10, 100, 200) }" "QPushButton:checked { background-color: rgb(10, 100, 200) }" "QPushButton::hover { background-color : rgb(10, 100, 200)}" )
 
-w = MainWindow()
+
+
+screen_width = app.primaryScreen().size().width()
+screen_height = app.primaryScreen().size().height()
+w = MainWindow(screen_width, screen_height)
 w.show()
 w.setFixedSize(w.size())
 sys.exit(app.exec_())

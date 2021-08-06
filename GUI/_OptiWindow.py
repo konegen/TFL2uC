@@ -25,8 +25,8 @@ def OptiWindow(self, n, LastWindow):
     if n == "Next":
         
         self.project_name = LastWindow.project_name.text()
-        self.output_path = LastWindow.output_path.text()
-        self.model_path = LastWindow.model_path.text()
+        self.output_path = LastWindow.output_path_label.text()
+        self.model_path = LastWindow.model_path_label.text()
             
         if self.project_name == "" or self.model_path == "" or self.output_path == "":
             msg = QMessageBox()
@@ -38,9 +38,16 @@ def OptiWindow(self, n, LastWindow):
             msg.exec_()
             
             return
+    
+    if n == "Back" and hasattr(LastWindow, 'model_memory'):
+        if LastWindow.model_memory != "":
+            try:
+                self.model_memory = int(LastWindow.model_memory.text())
+            except:
+                self.model_memory = None
 
 
-    self.Window2 = UIOptiWindow(self.FONT_STYLE, self)
+    self.Window2 = UIOptiWindow(self.WINDOW_WIDTH, self.WINDOW_HEIGHT, self.FONT_STYLE, self)
     
     if "Pruning" in self.optimizations:
         self.Window2.Pruning.setChecked(True)

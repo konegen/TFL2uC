@@ -16,7 +16,7 @@ def CSVDataloaderWindow(self):
     model later.    
     """
 
-    self.Window3_1 = UICSVDataloaderWindow(self.FONT_STYLE)
+    self.Window3_1 = UICSVDataloaderWindow(self.WINDOW_WIDTH, self.WINDOW_HEIGHT, self.FONT_STYLE)
 
     self.Window3_1.Browse.clicked.connect(self.browseCSVData)
     self.Window3_1.Preview.clicked.connect(lambda: self.previewCSVData(self.Window3_1))

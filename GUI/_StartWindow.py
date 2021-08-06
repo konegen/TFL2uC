@@ -19,12 +19,12 @@ def StartWindow(self, n, LastWindow):
         LastWindow: Which window was the last one
     """
 
-    self.Window1 = UIStartWindow(self.FONT_STYLE, self)
+    self.Window1 = UIStartWindow(self.WINDOW_WIDTH, self.WINDOW_HEIGHT, self.FONT_STYLE, self)
     
     if n == "Back":
         self.Window1.project_name.setText(self.project_name)
-        self.Window1.output_path.setText(self.output_path)
-        self.Window1.model_path.setText(self.model_path)
+        self.set_output_path_label(self.Window1)
+        self.set_model_path_label(self.Window1)
 
         try:
             if "Factor" in self.prun_type:

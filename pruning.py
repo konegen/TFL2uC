@@ -644,7 +644,7 @@ def pruning_for_acc(keras_model, x_train, x_val_y_train, comp, pruning_acc=None,
 
             if pruning_factor == 5:
                 print("No pruning possible")
-                return model
+                return original_model
 
             if last_pruning_step == 2:
                 print("Pruningfactor dense and conv: " + str(pruning_factor-last_pruning_step))
@@ -775,13 +775,6 @@ def prune_model(keras_model, prun_factor_dense=10, prun_factor_conv=10, metric='
     
     
     print("Finish with pruning")
-    
-    # for i in range(0,len(layer_params)):
-    #     try:
-    #         print(layer_types[i])
-    #         print(np.asarray(layer_params[i][0]).shape)
-    #     except:
-    #         print("No Parameter in layer")
 
     pruned_model = build_pruned_model(model, layer_params, layer_types, num_new_neurons, num_new_filters, comp)
     

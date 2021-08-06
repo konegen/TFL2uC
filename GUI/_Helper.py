@@ -7,7 +7,6 @@ import cv2
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import pandas as pd
 import tensorflow as tf
-from tensorflow.python.framework.tensor_shape import as_dimension
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -23,8 +22,20 @@ def get_output_path(self, CurWindow):
         CurWindow: GUI window from which the function is executed.
     """
     self.output_path = QFileDialog.getExistingDirectory(self, "Select the output path", os.path.expanduser('~'))
-    CurWindow.output_path.setText(self.output_path)
-    print(CurWindow.output_path.text())
+    self.set_output_path_label(CurWindow)
+
+def set_output_path_label(self, CurWindow):
+    """Set the output path label
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
+    CurWindow.output_path_label.setText(self.output_path)
+    print(CurWindow.output_path_label.text())
+    if CurWindow.output_path_label.fontMetrics().boundingRect(CurWindow.output_path_label.text()).width() > CurWindow.output_path_label.width():
+        CurWindow.output_path_label.setAlignment(Qt.AlignRight)
+    else:
+        CurWindow.output_path_label.setAlignment(Qt.AlignCenter)
 
 def get_model_path(self, CurWindow):
     """Get the keras model which should be converted
@@ -37,8 +48,20 @@ def get_model_path(self, CurWindow):
         CurWindow: GUI window from which the function is executed.
     """
     self.model_path = QFileDialog.getOpenFileName(self, "Select your model", os.path.expanduser('~'))[0]
-    CurWindow.model_path.setText(self.model_path)
-    print(CurWindow.model_path.text())
+    self.set_model_path_label(CurWindow)
+
+def set_model_path_label(self, CurWindow):
+    """Set the model path label
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
+    CurWindow.model_path_label.setText(self.model_path)
+    print(CurWindow.model_path_label.text())
+    if CurWindow.model_path_label.fontMetrics().boundingRect(CurWindow.model_path_label.text()).width() > CurWindow.model_path_label.width():
+        CurWindow.model_path_label.setAlignment(Qt.AlignRight)
+    else:
+        CurWindow.model_path_label.setAlignment(Qt.AlignCenter)
 
 def get_data_loader(self, CurWindow):
     """Get the file or path to load your training data.
@@ -61,8 +84,20 @@ def get_data_loader(self, CurWindow):
         self.CSVDataloaderWindow()
     else:
         print("No CSV file")
-        CurWindow.Daten_Pfad.setText(self.data_loader_path)
-        print(CurWindow.Daten_Pfad.text())
+        self.set_data_loader_label(CurWindow)
+
+def set_data_loader_label(self, CurWindow):
+    """Set the data loader path label
+
+    Args:
+        CurWindow: GUI window from which the function is executed.
+    """
+    CurWindow.data_path.setText(self.data_loader_path)
+    print(CurWindow.data_path.text())
+    if CurWindow.data_path.fontMetrics().boundingRect(CurWindow.data_path.text()).width() > CurWindow.data_path.width():
+        CurWindow.data_path.setAlignment(Qt.AlignRight)
+    else:
+        CurWindow.data_path.setAlignment(Qt.AlignCenter)
 
 
 def set_pruning(self, CurWindow):
@@ -300,44 +335,6 @@ def set_quant_dtype(self, dtype, CurWindow):
             self.quant_dtype = dtype
     print(self.quant_dtype)
 
-def get_optimization(self, button): #Wird nirgends verwendet!
-    """Returns the selected optimizations.
-
-    Returns the selected optimizations according to the
-    button of the optimizaiton type is pressed or not.
-
-    Args:
-        button: Pruning or quantization button.
-    """
-    if button.text() == "Pruning":
-        if button.isChecked() == True:
-            if not "Pruning" in self.optimizations:
-                self.optimizations.append(button.text())
-            # print(button.text() " is selected")
-        else:
-            if "Pruning" in self.optimizations:
-                self.optimizations.remove(button.text())
-            # print(button.text() " is deselected")
-
-    if button.text() == "Quantization":
-        if button.isChecked() == True:
-            if not "Quantization" in self.optimizations:
-                self.optimizations.append(button.text())
-            # print(button.text() " is selected")
-        else:
-            if "Quantization" in self.optimizations:
-                self.optimizations.remove(button.text())
-            # print(button.text() " is deselected")
-
-    print(self.optimizations)
-
-# def set_optimizations(self, optimizations, CurWindow):
-#     if "Pruning" in optimizations:
-#         CurWindow.b[0].setChecked(True)
-
-#     if "Quantization" in optimizations:
-#         CurWindow.b[1].setChecked(True)
-
 def model_pruning(self, CurWindow):
     """Starts the thread to prune the model.
 
@@ -353,7 +350,7 @@ def model_pruning(self, CurWindow):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
                 
-            msg.setText("Please enter number for the model memory between 5 and 100 kB.")
+            msg.setText("Please enter number for the model memory between 5 and 1000 kB.")
             msg.setWindowTitle("Warning")
             msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             msg.exec_()
@@ -384,10 +381,12 @@ def model_pruning(self, CurWindow):
 
     CurWindow.Back.setVisible(False)
     CurWindow.Load.setVisible(False)
+    CurWindow.Back_Load_placeholder.setVisible(True)
+    CurWindow.Back_Load_placeholder.setVisible(True)
 
     CurWindow.Loadpng.setVisible(True)
 
-    CurWindow.loading_images.run()
+    CurWindow.loading_images.start()
     CurWindow.prune_model.start()
 
 def download(self, CurWindow):
@@ -402,7 +401,8 @@ def download(self, CurWindow):
     try:
         CurWindow.prune_model.stop_thread()
         print("To uC start")
-        CurWindow.conv_build_load.run(self.model_memory)
+        CurWindow.conv_build_load.set_model_memory(self.model_memory)
+        CurWindow.conv_build_load.start()
     except:
         print("Error")
 
@@ -421,14 +421,10 @@ def terminate_thread(self, CurWindow):
         print("Finish!")
         CurWindow.loading_images.stop_thread()
         CurWindow.conv_build_load.stop_thread()
+        CurWindow.Finish_placeholder.setVisible(False)
         CurWindow.Finish.setVisible(True)
-        CurWindow.Loadpng.setPixmap(
-            QPixmap(
-                os.path.join(
-                    "Images", "GUI_loading_images", "GUI_load_finish.png"
-                )
-            )
-        )
+        CurWindow.Loadpng.setPixmap(QPixmap(os.path.join("Images", "GUI_loading_images", "GUI_load_finish.png")))
+        CurWindow.Loadpng.setScaledContents(True)
     except:
         print("Error")
 
@@ -641,7 +637,7 @@ def loadCSVData(self, CurWindow, MainWindow):
     if CurWindow.cb_label_col.isVisible() == True:
         self.csv_target_label = CurWindow.cb_label_col.currentText()
         CurWindow.close()
-        MainWindow.Daten_Pfad.setText(self.data_loader_path)
+        self.set_data_loader_label(MainWindow)
     else:
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
@@ -693,10 +689,6 @@ def get_separator(self, CurWindow):
             self.separator += '|' + CurWindow.other_separator.text()
         
     print(self.separator)
-
-
-def closeEvent(self, event):
-    print("Hello")
 
 
 class ThresholdCallback(tf.keras.callbacks.Callback):

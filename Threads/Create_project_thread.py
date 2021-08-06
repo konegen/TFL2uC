@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from Auto_TF_to_uC.create_project import *
+from Auto_TF_to_uC.create_project import convert_and_write
 
 
 class Convert_Build(QThread):
@@ -34,14 +34,18 @@ class Convert_Build(QThread):
         self.quant_dtype = quant_dtype
         self.separator = separator
         self.csv_target_label = csv_target_label
+        self.model_memory = None
+    
+    def set_model_memory(self, model_memory):
+        self.model_memory = model_memory
 
-    def run(self, model_memory):
+    def run(self):
         """Activates the thread
 
         Calls the function to convert the model and build the project.
         When the function is finished, a signal is emitted.
         """
-        convert_and_write(self.model_path, self.project_name, self.output_path, self.optimizations, self.data_loader_path, self.quant_dtype, self.separator, self.csv_target_label, model_memory)
+        convert_and_write(self.model_path, self.project_name, self.output_path, self.optimizations, self.data_loader_path, self.quant_dtype, self.separator, self.csv_target_label, self.model_memory)
         self.request_signal.emit()
         
     def stop_thread(self):

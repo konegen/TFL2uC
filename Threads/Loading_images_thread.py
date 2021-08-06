@@ -40,5 +40,4 @@ class Loading_images(QThread):
     def stop_thread(self):
         """Ends the thread
         """
-        print("Loading images thread end")
         self.terminate()

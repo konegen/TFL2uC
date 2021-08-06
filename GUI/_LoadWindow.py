@@ -20,7 +20,7 @@ def LoadWindow(self, LastWindow):
         LastWindow: Which window was the last one
     """
     if self.optimizations:
-        self.data_loader_path = LastWindow.Daten_Pfad.text()
+        self.data_loader_path = LastWindow.data_path.text()
         
         if  self.data_loader_path == "":
             msg = QMessageBox()
@@ -34,7 +34,7 @@ def LoadWindow(self, LastWindow):
 
 
     
-    self.Window4 = UILoadWindow(self.FONT_STYLE, self.model_path, self.project_name, self.output_path, self.data_loader_path, self.optimizations, self.prun_type, self.prun_factor_dense, self.prun_factor_conv, self.prun_acc_type, self.prun_acc, self.quant_dtype, self.separator, self.csv_target_label, self)
+    self.Window4 = UILoadWindow(self.WINDOW_WIDTH, self.WINDOW_HEIGHT, self.FONT_STYLE, self.model_path, self.project_name, self.output_path, self.data_loader_path, self.optimizations, self.prun_type, self.prun_factor_dense, self.prun_factor_conv, self.prun_acc_type, self.prun_acc, self.quant_dtype, self.separator, self.csv_target_label, self)
     
     if isinstance(self.model_memory, int):
         self.Window4.model_memory.setText(str(self.model_memory))
