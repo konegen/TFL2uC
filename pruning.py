@@ -432,11 +432,6 @@ def model_pruning(layer_types, layer_params, layer_output_shape, layer_bias, num
         else:
             ("No pruning for this layer")
             
-    # print("layer_output_shape")        
-    # for i in range(0,len(layer_output_shape)):
-    #     print(layer_types[i])
-    #     print(layer_output_shape[i])
-            
     return layer_params, num_new_neurons, num_new_filters, layer_output_shape
 
 
@@ -497,10 +492,6 @@ def build_pruned_model(model, new_model_param, layer_types, num_new_neurons, num
     print("Before pruning:")        
     model.summary()
     
-    # for i in range(0,len(new_model_param)):
-    #     print(layer_types[i])
-    #     print(np.asarray(new_model_param[i]).shape)
-    
     if "Sequential" in str(model):
         pruned_model = Sequential.from_config(model_config)
     elif "Functional" in str(model):
@@ -509,16 +500,11 @@ def build_pruned_model(model, new_model_param, layer_types, num_new_neurons, num
     print("After pruning:")
     pruned_model.summary()
     
-    # print("new_model_param")
     for i in range(0,len(pruned_model.layers)):
-        # print(layer_types[i])
         if len(new_model_param[i]) != 0:
-            # print(np.asarray(new_model_param[i][0]).shape)
-            # print(np.asarray(new_model_param[i]).shape)
             pruned_model.layers[i].set_weights(new_model_param[i])
         else:
             None
-            # print("No weights to set!")
     
     pruned_model.compile(**comp)
     
@@ -561,8 +547,7 @@ def pruning(keras_model, x_train, y_train,comp,fit, prun_factor_dense=10, prun_f
 
     pruned_model = build_pruned_model(model, layer_params, layer_types, num_new_neurons, num_new_filters,comp)
 
-    #earlystopper = EarlyStopping(monitor='val_accuracy', min_delta= 1e-3, mode='min', verbose=1, patience=5, restore_best_weights=True)
-    history = pruned_model.fit(x_train, y_train, **fit)
+    pruned_model.fit(x_train, y_train, **fit)
     
     return pruned_model
 
@@ -618,9 +603,8 @@ def pruning_for_acc(keras_model, x_train, x_val_y_train, comp, pruning_acc=None,
      
     
     train_epochs = 10
-    # early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
     threshold = ThresholdCallback(req_acc)
-    callbacks=[threshold]#, early_stopping]
+    callbacks=[threshold]
     
     
     
@@ -717,8 +701,6 @@ def pruning_for_acc(keras_model, x_train, x_val_y_train, comp, pruning_acc=None,
                     last_pruning_step = 10
                 
         all_pruning_factors.append(pruning_factor)
-        print("all_pruning_factors: " + str(all_pruning_factors))
-        print("lowest_pruning_factor_not_working: " + str(lowest_pruning_factor_not_working))
         
         
     return pruned_model

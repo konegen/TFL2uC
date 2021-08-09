@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+
 def get_output_path(self, CurWindow):
     """Get the path where the genareted Project should be stored
 
@@ -23,6 +24,7 @@ def get_output_path(self, CurWindow):
     """
     self.output_path = QFileDialog.getExistingDirectory(self, "Select the output path", os.path.expanduser('~'))
     self.set_output_path_label(CurWindow)
+
 
 def set_output_path_label(self, CurWindow):
     """Set the output path label
@@ -37,6 +39,7 @@ def set_output_path_label(self, CurWindow):
     else:
         CurWindow.output_path_label.setAlignment(Qt.AlignCenter)
 
+
 def get_model_path(self, CurWindow):
     """Get the keras model which should be converted
 
@@ -50,6 +53,7 @@ def get_model_path(self, CurWindow):
     self.model_path = QFileDialog.getOpenFileName(self, "Select your model", os.path.expanduser('~'))[0]
     self.set_model_path_label(CurWindow)
 
+
 def set_model_path_label(self, CurWindow):
     """Set the model path label
 
@@ -62,6 +66,7 @@ def set_model_path_label(self, CurWindow):
         CurWindow.model_path_label.setAlignment(Qt.AlignRight)
     else:
         CurWindow.model_path_label.setAlignment(Qt.AlignCenter)
+
 
 def get_data_loader(self, CurWindow):
     """Get the file or path to load your training data.
@@ -86,6 +91,7 @@ def get_data_loader(self, CurWindow):
         print("No CSV file")
         self.set_data_loader_label(CurWindow)
 
+
 def set_data_loader_label(self, CurWindow):
     """Set the data loader path label
 
@@ -93,7 +99,6 @@ def set_data_loader_label(self, CurWindow):
         CurWindow: GUI window from which the function is executed.
     """
     CurWindow.data_path.setText(self.data_loader_path)
-    print(CurWindow.data_path.text())
     if CurWindow.data_path.fontMetrics().boundingRect(CurWindow.data_path.text()).width() > CurWindow.data_path.width():
         CurWindow.data_path.setAlignment(Qt.AlignRight)
     else:
@@ -138,6 +143,7 @@ def set_pruning(self, CurWindow):
         CurWindow.prun_acc_label.setVisible(False)
         CurWindow.prun_acc_edit.setVisible(False) 
 
+
 def set_quantization(self, CurWindow):
     """Adds or removes quantization from optimization.
 
@@ -170,6 +176,7 @@ def set_quantization(self, CurWindow):
         CurWindow.quant_int_only.setVisible(False)
 
     print(self.optimizations)
+
 
 def set_prun_type(self, prun_type, CurWindow, Pruning_button):
     """Sets the pruning type.
@@ -274,6 +281,7 @@ def set_prun_type(self, prun_type, CurWindow, Pruning_button):
 
     print(self.prun_type)
 
+
 def set_prun_acc_type(self, prun_type, CurWindow):
     """Sets the pruning for accuracy type.
 
@@ -310,7 +318,8 @@ def set_prun_acc_type(self, prun_type, CurWindow):
             CurWindow.prun_acc_label.setVisible(False)
             CurWindow.prun_acc_edit.setVisible(False)
     print(self.prun_acc_type)
-        
+
+       
 def set_quant_dtype(self, dtype, CurWindow):
     """Sets the quantization type.
 
@@ -334,6 +343,7 @@ def set_quant_dtype(self, dtype, CurWindow):
         else:
             self.quant_dtype = dtype
     print(self.quant_dtype)
+
 
 def model_pruning(self, CurWindow):
     """Starts the thread to prune the model.
@@ -389,6 +399,7 @@ def model_pruning(self, CurWindow):
     CurWindow.loading_images.start()
     CurWindow.prune_model.start()
 
+
 def download(self, CurWindow):
     """Starts the thread to convert the model and create the project.
 
@@ -400,11 +411,11 @@ def download(self, CurWindow):
     """
     try:
         CurWindow.prune_model.stop_thread()
-        print("To uC start")
         CurWindow.conv_build_load.set_model_memory(self.model_memory)
         CurWindow.conv_build_load.start()
     except:
         print("Error")
+
 
 def terminate_thread(self, CurWindow):
     """End of converting the model and creating the project.
@@ -483,7 +494,6 @@ def dataloader_quantization(data_loader_path, image_height, image_width, separat
         return train_images
 
 
-
 def dataloader_pruning(data_loader_path, separator, csv_target_label, image_height, image_width, num_channels, num_classes):
     """Get data for retraining the model after pruning.
 
@@ -532,9 +542,6 @@ def dataloader_pruning(data_loader_path, separator, csv_target_label, image_heig
             return x_train, y_train, label_one_hot
 
     elif os.path.isdir(data_loader_path):
-
-        print(num_channels)
-
         # create data generator
         train_datagen = ImageDataGenerator(rescale=1.0/255.0, validation_split=0.2)
         # prepare iterators
@@ -557,19 +564,25 @@ def dataloader_pruning(data_loader_path, separator, csv_target_label, image_heig
         return train_it, val_it, False
 
 
-
-def browseCSVData(self):
+def browseCSVData(self, CurWindow):
     """Get the CSV file which contains your data.
 
     A Browse window opens and you can navigate to the CSV
     file which contains your data.
     """
     self.data_loader_path = QFileDialog.getOpenFileName(
-        self, "Select your data loader script", os.path.expanduser('~'), 'CSV(*.csv)')[0]
-    
+        self, "Select your data loader script", os.path.expanduser('~'), 'CSV(*.csv)')[0]    
     print(self.data_loader_path)
 
-        
+    CurWindow.table.setRowCount(0)
+    CurWindow.table.setColumnCount(0)
+    CurWindow.label_col.setVisible(False)
+    CurWindow.cb_label_col.setVisible(False)
+    CurWindow.totRow.setVisible(False)
+    CurWindow.numRow.setText("")
+    CurWindow.totCol.setVisible(False)
+    CurWindow.numCol.setText("")
+
 
 def previewCSVData(self, CurWindow):
     """Gives a preview of the CSV data structure.
@@ -584,6 +597,8 @@ def previewCSVData(self, CurWindow):
         CurWindow: GUI window from which the function is executed.
     """    
     try:
+        # Change shape of cursor to wait cursor
+        QApplication.setOverrideCursor(Qt.WaitCursor)
     
         if self.data_loader_path != None and ".csv" in self.data_loader_path:
             self.get_separator(CurWindow)
@@ -600,22 +615,28 @@ def previewCSVData(self, CurWindow):
             for row in df.iterrows():
                 values = row[1]
                 for col_index, value in enumerate(values):
-                    # if isinstance(value, (float, int)):
-                        # value = '{0:0,}'.format(value)
                     tableItem = QTableWidgetItem(str(value))
                     CurWindow.table.setItem(row[0], col_index, tableItem)
 
             CurWindow.label_col.setVisible(True)
             CurWindow.cb_label_col.setVisible(True)
 
-            CurWindow.numRow.setText("Total rows:\t" + str(df.shape[0]))
-            CurWindow.numCol.setText("Total columns:\t" + str(df.shape[1]))
+            CurWindow.totRow.setVisible(True)
+            CurWindow.numRow.setText(str(df.shape[0]))
+            CurWindow.totCol.setVisible(True)
+            CurWindow.numCol.setText(str(df.shape[1]))
+
+            # Default cursor shape
+            QApplication.restoreOverrideCursor()
         
         else:
+            # Default cursor shape
+            QApplication.restoreOverrideCursor()
+
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
                 
-            msg.setText("The selected file is no CSV.")
+            msg.setText("Preview of data failed.")
             msg.setWindowTitle("Warning")
             msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             msg.exec_()
@@ -628,7 +649,6 @@ def previewCSVData(self, CurWindow):
         msg.setWindowTitle("Warning")
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         msg.exec_()
-        
 
 
 def loadCSVData(self, CurWindow, MainWindow):
@@ -647,7 +667,6 @@ def loadCSVData(self, CurWindow, MainWindow):
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         msg.exec_()
         return
-
 
 
 def get_separator(self, CurWindow):
@@ -689,6 +708,7 @@ def get_separator(self, CurWindow):
             self.separator += '|' + CurWindow.other_separator.text()
         
     print(self.separator)
+
 
 
 class ThresholdCallback(tf.keras.callbacks.Callback):

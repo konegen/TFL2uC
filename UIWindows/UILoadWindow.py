@@ -50,9 +50,9 @@ class UILoadWindow(QWidget):
         self.Loadpng.setVisible(False)
         self.Loadpng.setScaledContents(True)
         
-        self.model_memory_label = QLabel("Model memory:\t")
+        self.model_memory_label = QLabel("Model memory:")
         self.model_memory_label.setStyleSheet("font: " + str(int(0.035*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
-        self.model_memory_label.setFixedWidth(0.2*self.WINDOW_WIDTH)
+        self.model_memory_label.setFixedWidth(0.19*self.WINDOW_WIDTH)
         self.model_memory_label.setFixedHeight(0.05*self.WINDOW_HEIGHT)
         self.model_memory_label.setAlignment(Qt.AlignLeft)
         
@@ -64,7 +64,7 @@ class UILoadWindow(QWidget):
         
         self.model_memory_label_kb = QLabel("kB")
         self.model_memory_label_kb.setStyleSheet("font: " + str(int(0.035*self.WINDOW_HEIGHT)) + "px " + FONT_STYLE)
-        self.model_memory_label_kb.setFixedWidth(0.05*self.WINDOW_WIDTH)
+        self.model_memory_label_kb.setFixedWidth(0.52*self.WINDOW_WIDTH)
         self.model_memory_label_kb.setFixedHeight(0.05*self.WINDOW_HEIGHT)
         self.model_memory_label_kb.setAlignment(Qt.AlignLeft)
 
@@ -193,10 +193,7 @@ class UILoadWindow(QWidget):
         self.horizontal_box[1].addWidget(self.model_memory_label)
         self.horizontal_box[1].addWidget(self.model_memory)
         self.horizontal_box[1].addWidget(self.model_memory_label_kb)
-        self.horizontal_box[1].addStretch()
-        self.horizontal_box[1].addStretch()
-        self.horizontal_box[1].addStretch()
-        self.horizontal_box[1].addStretch()
+        # self.horizontal_box[1].addItem(QSpacerItem(0.46*self.WINDOW_WIDTH, 0.05*self.WINDOW_HEIGHT))
         self.horizontal_box[1].addStretch()
         self.horizontal_box[1].setAlignment(Qt.AlignTop)
         

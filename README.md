@@ -26,7 +26,7 @@ The figure below shows the basic pipeline of TFL2uC. At the beginning, a TensorF
 
 
 ## Installation
-TFL2uC was developed and tested using **Python v.3.7.10** and **pip v.21.0.1**.
+TFL2uC was developed on **Windows 10** and tested using **Python v.3.7.10** and **pip v.21.0.1**.
 All other frameworks needed to use TFL2uC are located in the **requirements.txt** file. These can be installed as follows:
 ```
 pip install -r requirements.txt

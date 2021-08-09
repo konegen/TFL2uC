@@ -18,7 +18,7 @@ def CSVDataloaderWindow(self):
 
     self.Window3_1 = UICSVDataloaderWindow(self.WINDOW_WIDTH, self.WINDOW_HEIGHT, self.FONT_STYLE)
 
-    self.Window3_1.Browse.clicked.connect(self.browseCSVData)
+    self.Window3_1.Browse.clicked.connect(lambda: self.browseCSVData(self.Window3_1))
     self.Window3_1.Preview.clicked.connect(lambda: self.previewCSVData(self.Window3_1))
     self.Window3_1.Load_data.clicked.connect(lambda: self.loadCSVData(self.Window3_1, self.Window3))
 

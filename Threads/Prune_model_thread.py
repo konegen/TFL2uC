@@ -54,9 +54,6 @@ class Prune_model(QThread):
             model = tf.keras.models.load_model(self.model_path)
             num_classes = model.layers[-1].output_shape[1]
 
-            print("Model input shape")
-            print(model.input.shape)
-            print(len(model.input.shape))
             if len(model.input.shape) <= 3:
                 x_train, x_val_y_train, label_one_hot = dataloader_pruning(self.data_loader_path, self.separator, self.csv_target_label, model.input.shape[1], model.input.shape[2], None, num_classes)
             else:
@@ -96,8 +93,6 @@ class Prune_model(QThread):
 
             # fit model
             if os.path.isfile(self.data_loader_path):
-                print(x_train.shape)
-                print(x_val_y_train.shape)
                 pruned_model.fit(x=x_train, y=x_val_y_train, batch_size=64, validation_split=0.2,
                     epochs=train_epochs, callbacks=[callback])
             elif os.path.isdir(self.data_loader_path):
