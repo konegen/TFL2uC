@@ -1,9 +1,13 @@
+''' Copyright [2020] Hahn-Schickard-Gesellschaft für angewandte Forschung e.V., Daniel Konegen + Marcus Rueb
+    Copyright [2021] Karlsruhe Institute of Technology, Daniel Konegen
+    SPDX-License-Identifier: Apache-2.0
+============================================================================================================'''
+
 import sys
 import os
-import matplotlib.image as mpimg
 import numpy as np
 import random
-import cv2
+from PIL import Image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import pandas as pd
 import tensorflow as tf
@@ -483,8 +487,8 @@ def dataloader_quantization(data_loader_path, image_height, image_width, separat
                 images = os.listdir(data_loader_path + "/" + folders)
             for i in range(0,int(500/len(classes))):
                 rand_img = random.choice(images)
-                img = mpimg.imread(data_loader_path + "/" + folders + "/" + rand_img)
-                resized_image = cv2.resize(img, (image_height, image_width))
+                img = Image.open(data_loader_path + "/" + folders + "/" + rand_img)
+                resized_image = np.array(img.resize((image_height, image_width)))
                 train_images.append(resized_image)
         
         train_images = np.asarray(train_images)

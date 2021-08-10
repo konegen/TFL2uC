@@ -1,3 +1,8 @@
+''' Copyright [2020] Hahn-Schickard-Gesellschaft für angewandte Forschung e.V., Daniel Konegen + Marcus Rueb
+    Copyright [2021] Karlsruhe Institute of Technology, Daniel Konegen
+    SPDX-License-Identifier: Apache-2.0
+============================================================================================================'''
+
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.models import load_model
 from tensorflow.keras.models import Model

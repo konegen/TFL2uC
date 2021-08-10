@@ -1,6 +1,9 @@
-from abc import abstractmethod
+''' Copyright [2020] Hahn-Schickard-Gesellschaft für angewandte Forschung e.V., Daniel Konegen + Marcus Rueb
+    Copyright [2021] Karlsruhe Institute of Technology, Daniel Konegen
+    SPDX-License-Identifier: Apache-2.0
+============================================================================================================'''
+
 import os
-import fileinput
 import shutil
 import pathlib
 
