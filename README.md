@@ -34,9 +34,9 @@ pip install -r requirements.txt
 
 If **Ubuntu** is used, the following must also be installed:
 ```
-sudo apt-get install python3-pyqt5  
-sudo apt-get install pyqt5-dev-tools
-sudo apt-get install qttools5-dev-tools
+sudo apt-get install python3-pyqt5 -y
+sudo apt-get install pyqt5-dev-tools -y
+sudo apt-get install qttools5-dev-tools -y
 ```
 
 
