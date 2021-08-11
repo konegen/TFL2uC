@@ -492,6 +492,9 @@ def dataloader_quantization(data_loader_path, image_height, image_width, separat
                 train_images.append(resized_image)
         
         train_images = np.asarray(train_images)
+        if np.max(train_images) > 1:
+            train_images = train_images/255.0
+            
         if len(train_images.shape) == 3:
             train_images = np.expand_dims(train_images, axis=3) 
 

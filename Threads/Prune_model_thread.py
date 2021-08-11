@@ -92,7 +92,7 @@ class Prune_model(QThread):
 
 
             train_epochs = 20
-            callback = tf.keras.callbacks.EarlyStopping(monitor='val_acc', patience=5, restore_best_weights=True)
+            callback = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=5, restore_best_weights=True)
 
             pruned_model.summary()
 

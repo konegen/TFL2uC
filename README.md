@@ -71,7 +71,7 @@ If you select pruning, you can choose between two options:
 
 If quantization is selected, you can choose between two options:
 - int8 + float32: This quantization approach converts all weights to int8 values. But the input and output still remain 32-bit float.
-- int8 only: All weights get converted to int8 values. Also the input and output will be converted to 8-bit integer. When executing the net on a microcontroller later, the input values of the model must be passed as unsigned int8 values. Also the output values are returned as unsigned int8 values.
+- int8 only: All weights get converted to int8 values. Also the input and output will be converted to 8-bit integer. When executing the net on a microcontroller later, the input values of the model must be passed as signed int8 values. Also the output values are returned as signed int8 values.
 
 <p align="center">
 <img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_2d.PNG" width="45%" height="45%">
