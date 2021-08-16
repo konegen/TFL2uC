@@ -603,7 +603,7 @@ def pruning_for_acc(keras_model, x_train, x_val_y_train, comp, pruning_acc=None,
             original_model_acc = original_model.evaluate(x_train,x_val_y_train)[-1]
         elif os.path.isdir(data_loader_path):
             original_model_acc = original_model.evaluate_generator(x_val_y_train)[-1]
-        print(original_model_acc)
+        print("Start model accuracy: " + str(original_model_acc*100) + "%")
         req_acc = original_model_acc-(max_acc_loss/100)
      
     

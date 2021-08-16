@@ -115,24 +115,23 @@ def main_functions(project_dir, model_name, model_input_neurons, model_output_ne
         if model_output_neurons == 1:
             if quant_dtype is not None and "int8 only" in quant_dtype: 
                 f.write('int8_t model_execute(int8_t *input_data) {\n'
-                        'for (int i = 0; i < ' + str(model_input_neurons) + '; ++i) {\n'
-                        '  input->data.int8[i] = *input_data;\n')
+                        '  for (int i = 0; i < ' + str(model_input_neurons) + '; ++i) {\n'
+                        '    input->data.int8[i] = *input_data;\n')
             else:
                 f.write('float model_execute(float *input_data) {\n'
-                        'for (int i = 0; i < ' + str(model_input_neurons) + '; ++i) {\n'
-                        '  input->data.f[i] = *input_data;\n')
+                        '  for (int i = 0; i < ' + str(model_input_neurons) + '; ++i) {\n'
+                        '    input->data.f[i] = *input_data;\n')
         else:
             if quant_dtype is not None and "int8 only" in quant_dtype: 
                 f.write('int8_t* model_execute(int8_t *input_data) {\n'
-                        'for (int i = 0; i < ' + str(model_input_neurons) + '; ++i) {\n'
-                        '  input->data.int8[i] = *input_data;\n')
+                        '  for (int i = 0; i < ' + str(model_input_neurons) + '; ++i) {\n'
+                        '    input->data.int8[i] = *input_data;\n')
             else:
                 f.write('float* model_execute(float *input_data) {\n'
-                        'for (int i = 0; i < ' + str(model_input_neurons) + '; ++i) {\n'
-                        '  input->data.f[i] = *input_data;\n')
-        f.write('  input_data++;\n'
-                '}\n'
-                '\n'
+                        '  for (int i = 0; i < ' + str(model_input_neurons) + '; ++i) {\n'
+                        '    input->data.f[i] = *input_data;\n')
+        f.write('    input_data++;\n'
+                '  }\n'
                 '\n'
                 '  // Run inference, and report any error\n'
                 '  TfLiteStatus invoke_status = interpreter->Invoke();\n'
