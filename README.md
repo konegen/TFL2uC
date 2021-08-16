@@ -42,7 +42,7 @@ sudo apt-get install qttools5-dev-tools -y
 
 
 ## Usage
-To start TFL2uC, the Start.py file is executed. </br>Afterwards the fist window of the GUI will be opened. In the first window the project name, the output path and the neural network to be converted are passed.
+To start TFL2uC, the TFL2uC.py file is executed. </br>Afterwards the fist window of the GUI will be opened. In the first window the project name, the output path and the neural network to be converted are passed.
 
 <p align="center">
 <img src="https://github.com/konegen/TFL2uC/blob/main/Images/GUI_windows/GUI_window_1.PNG" width="45%" height="45%">
